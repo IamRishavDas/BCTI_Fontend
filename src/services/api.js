@@ -70,4 +70,60 @@ export const api = {
     });
     return res.json();
   },
+
+  // === COURSES ===
+  getCourses: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/courses`, { 
+      headers: getAuthHeaders() 
+    });
+    return res.json();
+  },
+
+  getCourseLookups: async (isDeleted = false) => {
+    const res = await fetch(`${API_BASE_URL}/api/courses/lookups?isDeleted=${isDeleted}`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getCourseById: async (id) => {
+    const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, { 
+      headers: getAuthHeaders() 
+    });
+    return res.json();
+  },
+
+  createCourse: async (data) => {
+    const res = await fetch(`${API_BASE_URL}/api/courses`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateCourse: async (id, data) => {
+    const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  softDeleteCourse: async (id) => {
+    const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  restoreCourse: async (id) => {
+    const res = await fetch(`${API_BASE_URL}/api/courses/restore/${id}`, {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
 };

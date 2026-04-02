@@ -3,8 +3,11 @@ import { NavLink } from "react-router-dom";
 const menuItems = [
   { label: "Dashboard", path: "/admin/dashboard", icon: "📊" },
   { label: "All Students", path: "/admin/students", icon: "👨‍🎓" },
+  { label: "All Courses", path: "/admin/courses", icon: "📚" },
   { label: "Add New Student", path: "/admin/students/new", icon: "➕" },
+  { label: "Add New Course", path: "/admin/courses/new", icon: "📖" },
   { label: "Deleted Students", path: "/admin/deleted", icon: "🗑️" },
+  // { label: "Deleted Courses", path: "/admin/courses/deleted", icon: "🗑️" },
 ];
 
 export default function Sidebar() {

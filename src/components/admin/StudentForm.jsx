@@ -9,6 +9,7 @@ export default function StudentForm() {
   const navigate = useNavigate();
   const isEdit = !!id;
 
+  const [courses, setCourses] = useState([]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -23,6 +24,17 @@ export default function StudentForm() {
   useEffect(() => {
     if (isEdit) fetchStudent();
   }, [id]);
+
+  // Fetch courses for dropdown
+  useEffect(() => {
+    fetchCourses();
+    if (isEdit) fetchStudent();
+  }, [id]);
+
+  const fetchCourses = async () => {
+    const res = await api.getCourseLookups(false); // active courses only
+    if (res.success) setCourses(res.data || []);
+  };
 
   const fetchStudent = async () => {
     const res = await api.getStudentById(id);
@@ -99,8 +111,20 @@ export default function StudentForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Course ID (UUID)</label>
-          <input type="text" value={form.courseId} onChange={(e) => setForm({ ...form, courseId: e.target.value })} className="w-full px-5 py-4 border rounded-2xl" required />
+          <label className="block text-sm font-medium mb-2">Course</label>
+          <select
+            value={form.courseId}
+            onChange={(e) => setForm({ ...form, courseId: e.target.value })}
+            className="w-full px-5 py-4 border rounded-2xl"
+            required
+          >
+            <option value="">Select Course</option>
+            {courses.map((course) => (
+              <option key={course.courseId} value={course.courseId}>
+                {course.courseName} ({course.courseCode})
+              </option>
+            ))}
+          </select>
         </div>
 
         {!isEdit && (

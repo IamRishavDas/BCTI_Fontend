@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
 import { showSuccess } from "../../utils/toast";
-import { useConfirm } from "../../contexts/confirmContext";
+import { useConfirm } from "../../contexts/ConfirmContext"; 
 
 export default function DeletedStudents() {
   const [students, setStudents] = useState([]);

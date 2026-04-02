@@ -9,6 +9,8 @@ import { Navigate } from "react-router-dom"
 import StudentsList from "./components/admin/StudentsList"
 import StudentForm from "./components/admin/StudentForm"
 import DeletedStudents from "./components/admin/DeletedStudents"
+import CoursesList from "./components/admin/CoursesList"
+import CourseForm from "./components/admin/CourseForm"
 
 function App() {
 
@@ -37,6 +39,9 @@ function App() {
         <Route path="students/new" element={<StudentForm />} />
         <Route path="students/edit/:id" element={<StudentForm />} />
         <Route path="deleted" element={<DeletedStudents />} />
+        <Route path="courses" element={<CoursesList />} />
+        <Route path="courses/new" element={<CourseForm />} />
+        <Route path="courses/edit/:id" element={<CourseForm />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

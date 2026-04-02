@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Sidebar from "../common/Sidebar";
 import Navbar from "../Navbar";
 import { Outlet } from "react-router-dom";
-import { ConfirmProvider } from "../../contexts/confirmContext";
+import { ConfirmProvider } from "../../contexts/ConfirmContext";
 
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
