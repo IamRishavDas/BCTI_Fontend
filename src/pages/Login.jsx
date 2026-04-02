@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../utils/auth";
+import { showError } from "../utils/toast";
 
 export default function Login() {
   const [rollNo, setRollNo] = useState("");
@@ -41,7 +42,7 @@ export default function Login() {
         } else if(user.role.toLowerCase() === "student"){
           navigate("/dashboard");
         } else {
-          alert("Role not found contact admin");
+          showError("Role not found contact admin");
           navigate("/");
         }
       } else {
