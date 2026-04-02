@@ -1,27 +1,58 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";  
+import { useNavigate } from "react-router-dom";
+import { getUser } from "../utils/auth";
 
 export default function Login() {
   const [rollNo, setRollNo] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  
 
-  const handleLogin = (e) => {
+  const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    setTimeout(() => {
-      if (rollNo && password) {
-        alert("Login Successful! (Demo)");
-        // Todo: Save token / redirect to dashboard later
-        navigate("/");   // Go back to home after login
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rollNo: rollNo.trim(),
+          password: password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        localStorage.setItem("token", result.data);
+
+        const user = getUser();
+        if(user.role.toLowerCase() === "admin"){
+          navigate("/admin/dashboard");
+        } else if(user.role.toLowerCase() === "student"){
+          navigate("/dashboard");
+        } else {
+          alert("Role not found contact admin");
+          navigate("/");
+        }
       } else {
-        alert("Please enter Roll No and Password");
+        setError(result.message || "Invalid Roll Number or Password");
       }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Unable to connect to server. Please check if backend is running.");
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   return (
@@ -29,31 +60,30 @@ export default function Login() {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
         className="w-full max-w-md"
       >
         {/* Back Button */}
         <button
-          onClick={() => navigate(-1)}   // Goes back to previous page
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 font-medium transition-colors"
         >
           ← Back to Home
         </button>
 
-        {/* Login Card */}
         <div className="bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
-          {/* Header */}
           <div className="text-center mb-10">
-            <div className="mx-auto w-16 h-16 bg-blue-700 rounded-2xl flex items-center justify-center text-white text-4xl mb-4">
-              B
+            <div className="mx-auto mb-4">
+              <img 
+                src="/bcti-logo.jpg" 
+                alt="BCTI Logo" 
+                className="h-20 w-auto mx-auto object-contain"
+              />
             </div>
-            <h2 className="text-3xl font-semibold text-gray-900">Student Login</h2>
+            <h2 className="text-3xl font-semibold text-gray-900">Login</h2>
             <p className="text-gray-500 mt-2">BCTI Computer Training Institute</p>
           </div>
 
-          {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* Roll Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Roll Number
@@ -68,7 +98,6 @@ export default function Login() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password
@@ -83,21 +112,25 @@ export default function Login() {
               />
             </div>
 
-            {/* Login Button */}
+            {error && (
+              <p className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-2xl">
+                {error}
+              </p>
+            )}
+
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-blue-700 hover:bg-blue-800 text-white font-semibold text-lg rounded-2xl transition-all disabled:opacity-70"
+              className="w-full py-4 bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 text-white font-semibold text-lg rounded-2xl transition-all"
             >
               {loading ? "Logging in..." : "Login"}
             </motion.button>
           </form>
 
-          {/* Footer Note */}
           <p className="text-center text-gray-500 text-sm mt-8">
-            Contact admin if you forgot your password
+            Forgot password? Contact your administrator.
           </p>
         </div>
       </motion.div>
