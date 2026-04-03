@@ -42,7 +42,7 @@ export default function StudentLookups() {
           setTotalCount(result.data.data?.length || 0);
         }
       } else {
-        showError(result.data?.message || "Failed to load student lookups");
+        showError(result.data?.message || result.data?.Message || "Failed to load student lookups");
       }
     } catch (error) {
       console.error("Error fetching lookups:", error);

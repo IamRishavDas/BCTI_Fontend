@@ -63,7 +63,7 @@ export default function StudentForm() {
         showSuccess("Student updated successfully");
         navigate("/admin/students");
       } else {
-        showError(res.message || "Failed to update student");
+        showError(res.message || res.Message || "Failed to update student");
       }
     } else {
       // Create new student - full payload allowed
@@ -72,7 +72,7 @@ export default function StudentForm() {
         showSuccess("Student created successfully");
         navigate("/admin/students");
       } else {
-        showError(res.message || "Failed to create student");
+        showError(res.message || res.Message || "Failed to create student");
       }
     }
 

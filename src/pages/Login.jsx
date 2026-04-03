@@ -46,7 +46,7 @@ export default function Login() {
           navigate("/");
         }
       } else {
-        setError(result.message || "Invalid Roll Number or Password");
+        setError(result.message || result.Message || "Invalid Roll Number or Password");
       }
     } catch (err) {
       console.error("Login error:", err);

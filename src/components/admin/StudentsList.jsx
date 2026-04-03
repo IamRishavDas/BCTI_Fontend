@@ -51,7 +51,7 @@ export default function StudentsList() {
           setTotalCount(result.data.data?.length || 0);
         }
       } else {
-        showError(result.data?.message || "Failed to load students");
+        showError(result.data?.message || result.data?.Message || "Failed to load students");
       }
     } catch (error) {
       showError("Unable to connect to server");

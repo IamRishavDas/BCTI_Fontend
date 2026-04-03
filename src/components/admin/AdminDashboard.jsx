@@ -72,7 +72,7 @@ export default function AdminDashboard() {
       if (result.data?.success) {
         showSuccess(`Password reset successful for student ${trimmedRollNo}`);
       } else {
-        showError(result.data?.message || "Failed to reset password");
+        showError(result.data?.message || result.data?.Message || "Failed to reset password");
       }
     } catch (error) {
       console.error(error);

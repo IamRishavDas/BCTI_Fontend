@@ -51,14 +51,14 @@ export default function InputModal({
           <div className="border-t border-gray-100 px-8 py-6 flex gap-4">
             <button
               onClick={onClose}
-              className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl"
+              className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl cursor-pointer"
             >
               {cancelText}
             </button>
             <button
               onClick={handleSubmit}
               disabled={!inputValue.trim()}
-              className="flex-1 py-4 bg-blue-700 hover:bg-blue-800 disabled:bg-gray-400 text-white font-semibold rounded-2xl transition-all"
+              className="flex-1 py-4 bg-blue-700 hover:bg-blue-800 disabled:bg-gray-400 text-white font-semibold rounded-2xl transition-all cursor-pointer"
             >
               {confirmText}
             </button>
