@@ -7,7 +7,8 @@ const menuItems = [
   { label: "All Courses", path: "/admin/courses", icon: "📚" },
   { label: "Add New Student", path: "/admin/students/new", icon: "➕" },
   { label: "Add New Course", path: "/admin/courses/new", icon: "📖" },
-  { label: "Deleted Students", path: "/admin/deleted", icon: "🗑️" },
+  { label: "Deleted Students", path: "/admin/students/deleted", icon: "🗑️" },
+  { label: "Deleted Courses", path: "/admin/courses/deleted", icon: "🗑️" },
   // { label: "Deleted Courses", path: "/admin/courses/deleted", icon: "🗑️" },
 ];
 

@@ -1,59 +1,80 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import ConfirmModal from "../components/common/ConfirmModal";
+import InputModal from "../components/common/InputModal";
 
 const ConfirmContext = createContext(null);
 
 export const useConfirm = () => {
   const context = useContext(ConfirmContext);
   if (!context) {
-    throw new Error("useConfirm must be used within ConfirmProvider");
+    console.warn("useConfirm called outside ConfirmProvider. Returning dummy functions.");
+    return {
+      confirm: async () => false,
+      promptInput: async () => null,
+    };
   }
   return context;
 };
 
 export const ConfirmProvider = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [config, setConfig] = useState({});
+  const [confirmState, setConfirmState] = useState({ isOpen: false, config: {} });
+  const [inputState, setInputState] = useState({ isOpen: false, config: {} });
 
   const confirm = useCallback((options = {}) => {
     return new Promise((resolve) => {
-      setConfig({
-        title: options.title || "Are you sure?",
-        message: options.message || "This action cannot be undone.",
-        confirmText: options.confirmText || "Confirm",
-        cancelText: options.cancelText || "Cancel",
-        type: options.type || "danger",
-        onConfirm: () => resolve(true),
-        onCancel: () => resolve(false),
+      setConfirmState({
+        isOpen: true,
+        config: {
+          title: options.title || "Are you sure?",
+          message: options.message || "This action cannot be undone.",
+          confirmText: options.confirmText || "Confirm",
+          cancelText: options.cancelText || "Cancel",
+          type: options.type || "danger",
+          onConfirm: () => resolve(true),
+          onCancel: () => resolve(false),
+        }
       });
-      setIsOpen(true);
     });
   }, []);
 
-  const handleClose = () => {
-    setIsOpen(false);
-    config.onCancel?.();
-  };
-
-  const handleConfirm = () => {
-    config.onConfirm?.();
-    setIsOpen(false);
-  };
+  const promptInput = useCallback((options = {}) => {
+    return new Promise((resolve) => {
+      setInputState({
+        isOpen: true,
+        config: {
+          title: options.title || "Enter Information",
+          message: options.message || "Please provide the information",
+          placeholder: options.placeholder || "Enter value",
+          confirmText: options.confirmText || "Submit",
+          onSubmit: (value) => resolve(value),
+          onCancel: () => resolve(null),
+        }
+      });
+    });
+  }, []);
 
   return (
-    <ConfirmContext.Provider value={{ confirm }}>
+    <ConfirmContext.Provider value={{ confirm, promptInput }}>
       {children}
 
-      {/* Global Modal */}
       <ConfirmModal
-        isOpen={isOpen}
-        onClose={handleClose}
-        onConfirm={handleConfirm}
-        title={config.title}
-        message={config.message}
-        confirmText={config.confirmText}
-        cancelText={config.cancelText}
-        type={config.type}
+        isOpen={confirmState.isOpen}
+        onClose={() => setConfirmState({ isOpen: false, config: {} })}
+        onConfirm={() => {
+          confirmState.config.onConfirm?.();
+          setConfirmState({ isOpen: false, config: {} });
+        }}
+        {...confirmState.config}
+      />
+
+      <InputModal
+        isOpen={inputState.isOpen}
+        onClose={() => setInputState({ isOpen: false, config: {} })}
+        onSubmit={(value) => {
+          inputState.config.onSubmit?.(value);
+          setInputState({ isOpen: false, config: {} });
+        }}
+        {...inputState.config}
       />
     </ConfirmContext.Provider>
   );

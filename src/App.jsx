@@ -12,6 +12,8 @@ import DeletedStudents from "./components/admin/DeletedStudents"
 import CoursesList from "./components/admin/CoursesList"
 import CourseForm from "./components/admin/CourseForm"
 import StudentLookups from "./components/admin/StudentLookups"
+import DeletedCourses from "./components/admin/DeletedCourses"
+import { ConfirmProvider } from "./contexts/ConfirmContext"
 
 function App() {
 
@@ -20,35 +22,26 @@ function App() {
   const hideNavbar = location.pathname === "/login";
 
   return (
-    <>
+      <ConfirmProvider>  
       <Routes>
-      {/* Public */}
-      <Route path="/" element={<><Navbar /><Hero /></>} />
-      <Route path="/login" element={<Login />} />
+        <Route path="/" element={<><Navbar /><Hero /></>} />
+        <Route path="/login" element={<Login />} />
 
-      {/* Admin Panel */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute requireAdmin={true}>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="students" element={<StudentsList />} />
-        <Route path="students/new" element={<StudentForm />} />
-        <Route path="students/edit/:id" element={<StudentForm />} />
-        <Route path="deleted" element={<DeletedStudents />} />
-        <Route path="courses" element={<CoursesList />} />
-        <Route path="courses/new" element={<CourseForm />} />
-        <Route path="courses/edit/:id" element={<CourseForm />} />
-        <Route path="lookups" element={<StudentLookups />} />
-      </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="students" element={<StudentsList />} />
+          <Route path="students/new" element={<StudentForm />} />
+          <Route path="students/edit/:id" element={<StudentForm />} />
+          <Route path="students/deleted" element={<DeletedStudents />} />
+          <Route path="courses" element={<CoursesList />} />
+          <Route path="courses/new" element={<CourseForm />} />
+          <Route path="courses/edit/:id" element={<CourseForm />} />
+          <Route path="courses/deleted" element={<DeletedCourses />} />
+        </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-    </>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </ConfirmProvider>
   )
 }
 

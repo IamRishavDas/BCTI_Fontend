@@ -148,4 +148,28 @@ export const api = {
     });
     return res.json();
   },
+
+  resetStudentPassword: async (rollNo) => {
+    const response = await fetch(`${API_BASE_URL}/api/password/reset`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ rollNo }),
+    });
+
+    const data = await response.json();
+    return { data, rawResponse: response };
+  },
+
+  changePassword: async (currentPassword, newPassword) => {
+    const res = await fetch(`${API_BASE_URL}/api/password/change`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmPassword: newPassword
+      }),
+    });
+    return res.json();
+  },
 };
