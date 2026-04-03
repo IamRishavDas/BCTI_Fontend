@@ -38,13 +38,13 @@ export default function ConfirmModal({
         <div className="border-t px-8 py-6 flex gap-4">
           <button
             onClick={onClose}
-            className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl"
+            className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl cursor-pointer"
           >
             {cancelText}
           </button>
           <button
             onClick={onConfirm}
-            className={`flex-1 py-4 font-semibold rounded-2xl ${style.confirmClass}`}
+            className={`flex-1 py-4 font-semibold rounded-2xl cursor-pointer ${style.confirmClass}`}
           >
             {confirmText}
           </button>

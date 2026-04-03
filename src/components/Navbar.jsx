@@ -76,8 +76,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
         {/* Logo */}
         <div 
-          className="flex items-center gap-3 cursor-pointer"
-          onClick={() => navigate("/")}
+          className="flex items-center gap-3"
         >
           <img src="/bcti-logo.jpg" alt="BCTI Logo" className="h-12 w-auto object-contain" />
           <div className="hidden sm:block">
@@ -93,7 +92,7 @@ export default function Navbar() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleChangePassword}
-              className="px-6 py-3 text-sm font-medium text-gray-700 hover:text-blue-700 transition-colors"
+              className="px-6 py-3 text-sm font-medium text-gray-700 hover:text-blue-700 transition-colors cursor-pointer"
             >
               Change Password
             </motion.button>
@@ -104,7 +103,7 @@ export default function Navbar() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleLogout}
-              className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-2xl transition-all shadow-lg"
+              className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-2xl transition-all shadow-lg cursor-pointer"
             >
               Logout
             </motion.button>

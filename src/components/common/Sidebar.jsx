@@ -1,15 +1,11 @@
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-  { label: "Dashboard", path: "/admin/dashboard", icon: "📊" },
-  { label: "All Students", path: "/admin/students", icon: "👨‍🎓" },
-  // { label: "Student Lookups", path: "/admin/lookups", icon: "🔍" },
-  { label: "All Courses", path: "/admin/courses", icon: "📚" },
-  { label: "Add New Student", path: "/admin/students/new", icon: "➕" },
-  { label: "Add New Course", path: "/admin/courses/new", icon: "📖" },
+  { label: "Dashboard", path: "/admin/dashboard", icon: "📊", exact: true },
+  { label: "All Students", path: "/admin/students", icon: "👨‍🎓", exact: true },
+  { label: "All Courses", path: "/admin/courses", icon: "📚", exact: true },
   { label: "Deleted Students", path: "/admin/students/deleted", icon: "🗑️" },
   { label: "Deleted Courses", path: "/admin/courses/deleted", icon: "🗑️" },
-  // { label: "Deleted Courses", path: "/admin/courses/deleted", icon: "🗑️" },
 ];
 
 export default function Sidebar() {
@@ -27,6 +23,7 @@ export default function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.exact}
             className={({ isActive }) =>
               `flex items-center gap-4 px-6 py-4 rounded-2xl mb-2 text-gray-700 transition-all ${
                 isActive ? "bg-blue-50 text-blue-700 font-medium" : "hover:bg-gray-100"

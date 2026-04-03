@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
-import { showSuccess } from "../../utils/toast";
+import { showError, showSuccess } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext"; 
 
 export default function DeletedStudents() {
@@ -49,6 +49,8 @@ export default function DeletedStudents() {
     if (res.success) {
       showSuccess("Student permanently deleted");
       fetchDeleted();
+    } else {
+      showError(res.Message || res.message || "Something went wrong try again later");
     }
   };
 
@@ -60,8 +62,8 @@ export default function DeletedStudents() {
 
   const actions = (row) => (
     <div className="flex gap-3">
-      <button onClick={() => handleRestore(row.id)} className="px-5 py-2 bg-emerald-600 text-white rounded-2xl text-sm">Restore</button>
-      <button onClick={() => handlePermanentDelete(row.id)} className="px-5 py-2 bg-red-700 text-white rounded-2xl text-sm">Delete Forever</button>
+      <button onClick={() => handleRestore(row.id)} className="px-5 py-2 bg-emerald-600 text-white rounded-2xl text-sm cursor-pointer">Restore</button>
+      <button onClick={() => handlePermanentDelete(row.id)} className="px-5 py-2 bg-red-700 text-white rounded-2xl text-sm cursor-pointer">Delete Forever</button>
     </div>
   );
 

@@ -88,11 +88,11 @@ export default function AdminDashboard() {
         <p className="text-gray-600">Here's an overview of BCTI Computer Training Institute</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         <StatsCard title="Total Students" value={stats.totalStudents} icon="👨‍🎓" color="blue" />
         <StatsCard title="Total Courses" value={stats.totalCourses} icon="📚" color="amber" />
-        <StatsCard title="Active Batches" value="12" icon="🔄" color="emerald" />
-        <StatsCard title="This Month Intake" value="48" icon="📈" color="purple" />
+        {/* <StatsCard title="Active Batches" value="12" icon="🔄" color="emerald" />
+        <StatsCard title="This Month Intake" value="48" icon="📈" color="purple" /> */}
       </div>
 
       <div className="bg-white rounded-3xl p-8 shadow">
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <button
             onClick={handleResetPassword}
-            className="p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-blue-600 hover:bg-blue-50 transition-all group text-left"
+            className="cursor-pointer p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-blue-600 hover:bg-blue-50 transition-all group text-left"
           >
             <div className="text-4xl mb-4">🔑</div>
             <h3 className="font-semibold text-lg group-hover:text-blue-600">Reset Student Password</h3>
@@ -109,7 +109,7 @@ export default function AdminDashboard() {
 
           <button
             onClick={() => window.location.href = "/admin/students/new"}
-            className="p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-emerald-600 hover:bg-emerald-50 transition-all group text-left"
+            className="cursor-pointer p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-emerald-600 hover:bg-emerald-50 transition-all group text-left"
           >
             <div className="text-4xl mb-4">👨‍🎓</div>
             <h3 className="font-semibold text-lg group-hover:text-emerald-600">Add New Student</h3>
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
 
           <button
             onClick={() => window.location.href = "/admin/courses/new"}
-            className="p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-amber-600 hover:bg-amber-50 transition-all group text-left"
+            className="cursor-pointer p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-amber-600 hover:bg-amber-50 transition-all group text-left"
           >
             <div className="text-4xl mb-4">📖</div>
             <h3 className="font-semibold text-lg group-hover:text-amber-600">Add New Course</h3>

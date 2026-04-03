@@ -58,13 +58,13 @@ export default function CoursesList() {
     <div className="flex gap-2">
       <button
         onClick={() => navigate(`/admin/courses/edit/${row.courseId}`)}
-        className="px-4 py-2 text-sm bg-blue-600 text-white rounded-2xl hover:bg-blue-700"
+        className="px-4 py-2 text-sm bg-blue-600 text-white rounded-2xl hover:bg-blue-700 cursor-pointer"
       >
         Edit
       </button>
       <button
         onClick={() => handleDelete(row.courseId)}
-        className="px-4 py-2 text-sm bg-red-600 text-white rounded-2xl hover:bg-red-700"
+        className="px-4 py-2 text-sm bg-red-600 text-white rounded-2xl hover:bg-red-700 cursor-pointer"
       >
         Delete
       </button>

@@ -101,13 +101,13 @@ export default function StudentsList() {
     <div className="flex gap-2">
       <button
         onClick={() => navigate(`/admin/students/edit/${row.id}`)}
-        className="px-4 py-2 text-sm bg-blue-600 text-white rounded-2xl hover:bg-blue-700"
+        className="px-4 py-2 text-sm bg-blue-600 text-white rounded-2xl hover:bg-blue-700 cursor-pointer"
       >
         Edit
       </button>
       <button
         onClick={() => handleDelete(row.id)}
-        className="px-4 py-2 text-sm bg-red-600 text-white rounded-2xl hover:bg-red-700"
+        className="px-4 py-2 text-sm bg-red-600 text-white rounded-2xl hover:bg-red-700 cursor-pointer"
       >
         Delete
       </button>
@@ -123,7 +123,7 @@ export default function StudentsList() {
           placeholder="Search students..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-6 py-3 border border-gray-300 rounded-3xl w-80 focus:outline-none focus:border-blue-600"
+          className="px-6 py-3 border border-gray-300 rounded-3xl w-80 focus:outline-none focus:border-blue-600 cursor-pointer"
         />
       </div>
 
@@ -144,7 +144,7 @@ export default function StudentsList() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-5 py-2 border rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            className="px-5 py-2 border rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 cursor-pointer"
           >
             Previous
           </button>
@@ -156,7 +156,7 @@ export default function StudentsList() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-5 py-2 border rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
+            className="px-5 py-2 border rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 cursor-pointer"
           >
             Next
           </button>

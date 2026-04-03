@@ -47,7 +47,7 @@ export default function CourseForm() {
       showSuccess(isEdit ? "Course updated successfully" : "Course created successfully");
       navigate("/admin/courses");
     } else {
-      showError(res.message || "Operation failed");
+      showError(res.message || res.Message || "Operation failed");
     }
     setLoading(false);
   };
@@ -119,14 +119,14 @@ export default function CourseForm() {
           <button
             type="button"
             onClick={() => navigate("/admin/courses")}
-            className="flex-1 py-4 border-2 border-gray-300 rounded-2xl font-medium"
+            className="flex-1 py-4 border-2 border-gray-300 rounded-2xl font-medium cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 py-4 bg-blue-700 text-white rounded-2xl font-semibold disabled:bg-blue-400"
+            className="flex-1 py-4 bg-blue-700 text-white rounded-2xl font-semibold disabled:bg-blue-400 cursor-pointer"
           >
             {loading ? "Saving..." : isEdit ? "Update Course" : "Create Course"}
           </button>

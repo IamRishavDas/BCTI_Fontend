@@ -162,7 +162,7 @@ export default function StudentForm() {
           <select
             value={form.courseId}
             onChange={(e) => setForm({ ...form, courseId: e.target.value })}
-            className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600"
+            className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600 cursor-pointer"
             required
           >
             <option value="">Choose a Course</option>
@@ -191,14 +191,14 @@ export default function StudentForm() {
           <button
             type="button"
             onClick={() => navigate("/admin/students")}
-            className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl transition-all"
+            className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl transition-all cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 py-4 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-2xl transition-all disabled:bg-blue-400"
+            className="flex-1 py-4 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-2xl transition-all disabled:bg-blue-400 cursor-pointer"
           >
             {loading ? "Saving..." : isEdit ? "Update Student" : "Create Student"}
           </button>

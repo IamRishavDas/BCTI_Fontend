@@ -49,7 +49,7 @@ export default function DeletedCourses() {
   const actions = (row) => (
     <button
       onClick={() => handleRestore(row.courseId)}
-      className="px-6 py-2 bg-emerald-600 text-white rounded-2xl hover:bg-emerald-700 text-sm"
+      className="px-6 py-2 bg-emerald-600 text-white rounded-2xl hover:bg-emerald-700 text-sm cursor-pointer"
     >
       Restore Course
     </button>
