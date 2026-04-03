@@ -1,28 +1,35 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();        // ← Added this
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check login status on component mount and when storage changes
   useEffect(() => {
     const checkLoginStatus = () => {
       const token = localStorage.getItem("token");
+      
+      if (location.pathname === "/" && token) {
+        localStorage.clear();
+        setIsLoggedIn(false);
+        return;
+      }
+
       setIsLoggedIn(!!token);
     };
 
     checkLoginStatus();
 
-    // Listen for storage changes (in case logout happens in another tab)
+    // Listen for storage changes
     window.addEventListener("storage", checkLoginStatus);
+
     return () => window.removeEventListener("storage", checkLoginStatus);
-  }, []);
+  }, [location.pathname]);   // Re-run when route changes
 
   const handleLogout = () => {
-    // Completely remove everything from localStorage
-    localStorage.clear();        // Clears all data (token + any future user data)
+    localStorage.clear();
     setIsLoggedIn(false);
     navigate("/");
   };
@@ -34,6 +41,7 @@ export default function Navbar() {
       className="bg-white shadow-md sticky top-0 z-50"
     >
       <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+        
         {/* Logo */}
         <div 
           className="flex items-center gap-3 cursor-pointer"

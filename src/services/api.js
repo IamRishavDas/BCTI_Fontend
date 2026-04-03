@@ -7,16 +7,38 @@ const getAuthHeaders = () => ({
 
 export const api = {
   // === STUDENTS ===
-  getStudents: async () => {
-    const res = await fetch(`${API_BASE_URL}/api/students`, { headers: getAuthHeaders() });
-    return res.json();
-  },
+  getStudents: async (pageNumber = 1, pageSize = 10) => {
+    const url = `${API_BASE_URL}/api/students?PageNumber=${pageNumber}&PageSize=${pageSize}`;
 
-  getStudentLookups: async (isDeleted = false) => {
-    const res = await fetch(`${API_BASE_URL}/api/students/lookups?isDeleted=${isDeleted}`, {
+    const response = await fetch(url, {
       headers: getAuthHeaders(),
     });
-    return res.json();
+
+    const data = await response.json();
+
+    return {
+      data: data,                  
+      rawResponse: response,         
+      ok: response.ok,
+      status: response.status
+    };
+  },
+
+  getStudentLookups: async (pageNumber = 1, pageSize = 10, isDeleted = false) => {
+    const url = `${API_BASE_URL}/api/students/lookups?PageNumber=${pageNumber}&PageSize=${pageSize}&isDeleted=${isDeleted}`;
+
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    return {
+      data: data,
+      rawResponse: response,
+      ok: response.ok,
+      status: response.status
+    };
   },
 
   getDeletedStudents: async () => {

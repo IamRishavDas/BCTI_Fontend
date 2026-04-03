@@ -11,6 +11,7 @@ import StudentForm from "./components/admin/StudentForm"
 import DeletedStudents from "./components/admin/DeletedStudents"
 import CoursesList from "./components/admin/CoursesList"
 import CourseForm from "./components/admin/CourseForm"
+import StudentLookups from "./components/admin/StudentLookups"
 
 function App() {
 
@@ -42,6 +43,7 @@ function App() {
         <Route path="courses" element={<CoursesList />} />
         <Route path="courses/new" element={<CourseForm />} />
         <Route path="courses/edit/:id" element={<CourseForm />} />
+        <Route path="lookups" element={<StudentLookups />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
