@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { showError } from "../../utils/toast";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function StudentDashboard() {
   const [myReports, setMyReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalReports, setTotalReports] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMyReports();
@@ -84,7 +86,7 @@ export default function StudentDashboard() {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold">Recent Reports</h2>
           <button
-            onClick={() => window.location.href = "/student/report"}
+            onClick={() => navigate("/student/report")}
             className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
           >
             Submit New Report →
