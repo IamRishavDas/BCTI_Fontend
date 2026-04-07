@@ -201,7 +201,7 @@ export default function AdminDashboard() {
     setLoading(true);
     try {
       const [studentsRes, coursesCountRes] = await Promise.all([
-        api.getStudents(1, 1),
+        api.getStudentCount(false),
         fetch(`${import.meta.env.VITE_API_BASE_URL}/api/courses/count?isDeleted=false`, {
           headers: {
             "Content-Type": "application/json",
@@ -210,10 +210,10 @@ export default function AdminDashboard() {
         }).then((res) => res.json()),
       ]);
 
-      if (studentsRes.data?.success) {
+      if (studentsRes?.success) {
         setStats((prev) => ({
           ...prev,
-          totalStudents: studentsRes.data.data?.length || 0,
+          totalStudents: studentsRes.data || 0,
         }));
       }
       if (coursesCountRes.success) {

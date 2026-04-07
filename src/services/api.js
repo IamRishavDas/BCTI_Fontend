@@ -96,6 +96,14 @@ export const api = {
     return res.json();
   },
 
+  getStudentCount: async (isDeleted) => {
+    const res = await fetch(`${API_BASE_URL}/api/students/count?isDeleted=${isDeleted}`, {
+      headers: getAuthHeaders(),
+    });
+    if(res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
   // === COURSES ===
   getCourses: async () => {
     const res = await fetch(`${API_BASE_URL}/api/courses`, { headers: getAuthHeaders() });
