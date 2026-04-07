@@ -1,3 +1,5 @@
+import { showError } from "../utils/toast";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const getAuthHeaders = () => ({
@@ -5,49 +7,45 @@ const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
 
+const handleUnauthorized = () => {
+  localStorage.clear();
+  window.location.href = "/login";
+  showError("Session expired");
+};
+
 export const api = {
   // === STUDENTS ===
   getStudents: async (pageNumber = 1, pageSize = 10) => {
     const url = `${API_BASE_URL}/api/students?PageNumber=${pageNumber}&PageSize=${pageSize}`;
 
-    const response = await fetch(url, {
-      headers: getAuthHeaders(),
-    });
+    const response = await fetch(url, { headers: getAuthHeaders() });
+    if (response.status === 401) handleUnauthorized();
 
     const data = await response.json();
 
-    return {
-      data: data,                  
-      rawResponse: response,         
-      ok: response.ok,
-      status: response.status
-    };
+    return { data, rawResponse: response, ok: response.ok, status: response.status };
   },
 
   getStudentLookups: async (pageNumber = 1, pageSize = 10, isDeleted = false) => {
     const url = `${API_BASE_URL}/api/students/lookups?PageNumber=${pageNumber}&PageSize=${pageSize}&isDeleted=${isDeleted}`;
 
-    const response = await fetch(url, {
-      headers: getAuthHeaders(),
-    });
+    const response = await fetch(url, { headers: getAuthHeaders() });
+    if (response.status === 401) handleUnauthorized();
 
     const data = await response.json();
 
-    return {
-      data: data,
-      rawResponse: response,
-      ok: response.ok,
-      status: response.status
-    };
+    return { data, rawResponse: response, ok: response.ok, status: response.status };
   },
 
   getDeletedStudents: async () => {
     const res = await fetch(`${API_BASE_URL}/api/students/deleted`, { headers: getAuthHeaders() });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
   getStudentById: async (id) => {
     const res = await fetch(`${API_BASE_URL}/api/students/${id}`, { headers: getAuthHeaders() });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -57,6 +55,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -66,6 +65,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -74,6 +74,7 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -82,6 +83,7 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -90,14 +92,14 @@ export const api = {
       method: "PATCH",
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
   // === COURSES ===
   getCourses: async () => {
-    const res = await fetch(`${API_BASE_URL}/api/courses`, { 
-      headers: getAuthHeaders() 
-    });
+    const res = await fetch(`${API_BASE_URL}/api/courses`, { headers: getAuthHeaders() });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -105,13 +107,13 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/api/courses/lookups?isDeleted=${isDeleted}`, {
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
   getCourseById: async (id) => {
-    const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, { 
-      headers: getAuthHeaders() 
-    });
+    const res = await fetch(`${API_BASE_URL}/api/courses/${id}`, { headers: getAuthHeaders() });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -121,6 +123,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -130,6 +133,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -138,6 +142,7 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -146,6 +151,7 @@ export const api = {
       method: "PATCH",
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -155,6 +161,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify({ rollNo }),
     });
+    if (response.status === 401) handleUnauthorized();
 
     const data = await response.json();
     return { data, rawResponse: response };
@@ -167,56 +174,40 @@ export const api = {
       body: JSON.stringify({
         currentPassword,
         newPassword,
-        confirmPassword: newPassword
+        confirmPassword: newPassword,
       }),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
-    // === STUDENT REPORTS ===
+  // === STUDENT REPORTS ===
   createDailyReport: async (data) => {
     const res = await fetch(`${API_BASE_URL}/api/students/reports`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
   getMyReports: async (pageNumber = 1, pageSize = 10) => {
     const url = `${API_BASE_URL}/api/students/reports?PageNumber=${pageNumber}&PageSize=${pageSize}`;
 
-    const response = await fetch(url, {
-      headers: getAuthHeaders(),
-    });
+    const response = await fetch(url, { headers: getAuthHeaders() });
+    if (response.status === 401) handleUnauthorized();
 
     const data = await response.json();
 
-    return {
-      data: data,
-      rawResponse: response,
-      ok: response.ok,
-    };
+    return { data, rawResponse: response, ok: response.ok };
   },
 
   getTypingLeaderboard: async () => {
     const res = await fetch(`${API_BASE_URL}/api/students/reports/typing-leaderboard`, {
       headers: getAuthHeaders(),
     });
-    return res.json();
-  },
-
-  // Password Change (for both Student & Admin)
-  changePassword: async (currentPassword, newPassword) => {
-    const res = await fetch(`${API_BASE_URL}/api/password/change`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        currentPassword,
-        newPassword,
-        confirmPassword: newPassword,
-      }),
-    });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -225,6 +216,7 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/api/notices`, {
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -232,16 +224,17 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
-  // Admin only
   createNotice: async (data) => {
     const res = await fetch(`${API_BASE_URL}/api/notices`, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -251,6 +244,7 @@ export const api = {
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
@@ -259,39 +253,29 @@ export const api = {
       method: "DELETE",
       headers: getAuthHeaders(),
     });
+    if (res.status === 401) handleUnauthorized();
     return res.json();
   },
 
-    // Search Students by Roll No or Name (Admin only)
   searchStudents: async (searchTerm, pageNumber = 1, pageSize = 10) => {
     const url = `${API_BASE_URL}/api/students/search/${encodeURIComponent(searchTerm)}?PageNumber=${pageNumber}&PageSize=${pageSize}`;
 
-    const response = await fetch(url, {
-      headers: getAuthHeaders(),
-    });
+    const response = await fetch(url, { headers: getAuthHeaders() });
+    if (response.status === 401) handleUnauthorized();
 
     const data = await response.json();
 
-    return {
-      data: data,
-      rawResponse: response,
-    };
+    return { data, rawResponse: response };
   },
 
-  // Get Student Typing Reports with Pagination (Admin only)
   getStudentTypingReports: async (studentId, pageNumber = 1, pageSize = 10) => {
     const url = `${API_BASE_URL}/api/students/reports/${studentId}?PageNumber=${pageNumber}&PageSize=${pageSize}`;
 
-    const response = await fetch(url, {
-      headers: getAuthHeaders(),
-    });
+    const response = await fetch(url, { headers: getAuthHeaders() });
+    if (response.status === 401) handleUnauthorized();
 
     const data = await response.json();
 
-    return {
-      data: data,
-      rawResponse: response,
-    };
+    return { data, rawResponse: response };
   },
-
 };
