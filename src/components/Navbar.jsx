@@ -138,8 +138,7 @@ export default function Navbar() {
       >
         {/* Brand */}
         <div
-          onClick={() => navigate("/")}
-          style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
+          style={{ display: "flex", alignItems: "center", gap: 12 }}
         >
           <div
             style={{

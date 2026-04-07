@@ -21,6 +21,8 @@ import { isAdmin, isAuthenticated } from "./utils/auth"
 import NotFound from "./components/NotFound"
 import NoticesList from "./components/admin/NoticesList"
 import NoticeForm from "./components/admin/NoticeForm"
+import StudentSearch from "./components/admin/StudentSearch"
+import StudentReports from "./components/admin/StudentReports"
 
 function App() {
 
@@ -44,6 +46,8 @@ function App() {
           <Route path="notices" element={<NoticesList />} />
           <Route path="notices/new" element={<NoticeForm />} />
           <Route path="notices/edit/:id" element={<NoticeForm />} />
+          <Route path="students/search" element={<StudentSearch />} />
+          <Route path="students/:studentId/reports" element={<StudentReports />} />
         </Route>
 
         <Route 

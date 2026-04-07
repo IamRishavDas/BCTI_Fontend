@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { isAdmin } from "../../utils/auth";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { AddBookIcon, AddNoticeIcon, AddPersonIcon, AdminDashIcon, CoursesIcon, HomeIcon, ListIcon, NoticeIcon, ReportIcon, StudentsIcon, TrashIcon, TrophyIcon } from "../../static/Svg";
+import { AddBookIcon, AddNoticeIcon, AddPersonIcon, AdminDashIcon, CoursesIcon, HomeIcon, ListIcon, NoticeIcon, ReportIcon, SearchIcon, StudentsIcon, TrashIcon, TrophyIcon } from "../../static/Svg";
 
 const adminMenu = [
   { label: "Dashboard",        path: "/admin/dashboard",          icon: AdminDashIcon  },
@@ -16,6 +16,7 @@ const adminMenu = [
   { label: "Leaderboard",      path: "/admin/student/leaderboard",icon: TrophyIcon     },
   { label: "Notices",          path: "/admin/notices",            icon: NoticeIcon     },
   { label: "Add Notice",       path: "/admin/notices/new",        icon: AddNoticeIcon  },
+  { label: "Search",           path: "/admin/students/search",    icon: SearchIcon  },
 ];
 
 const studentMenu = [
@@ -36,17 +37,21 @@ const adminSections = [
     items: [adminMenu[1], adminMenu[2], adminMenu[3], adminMenu[4]],
   },
   {
-    title: "Archive",
-    items: [adminMenu[5], adminMenu[6]],
-  },
-  {
     title: "Stats",
     items: [adminMenu[7]],
   },
   {
     title: "Notice",
     items: [adminMenu[8], adminMenu[9]]
-  }
+  },
+  {
+    title: "Archive",
+    items: [adminMenu[5], adminMenu[6]],
+  },
+  {
+    title: "Search",
+    items: [adminMenu[10]]
+  },
 ];
 
 const studentSections = [

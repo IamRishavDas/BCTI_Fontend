@@ -183,11 +183,20 @@ export const api = {
     return res.json();
   },
 
-  getMyReports: async () => {
-    const res = await fetch(`${API_BASE_URL}/api/students/reports`, {
+  getMyReports: async (pageNumber = 1, pageSize = 10) => {
+    const url = `${API_BASE_URL}/api/students/reports?PageNumber=${pageNumber}&PageSize=${pageSize}`;
+
+    const response = await fetch(url, {
       headers: getAuthHeaders(),
     });
-    return res.json();
+
+    const data = await response.json();
+
+    return {
+      data: data,
+      rawResponse: response,
+      ok: response.ok,
+    };
   },
 
   getTypingLeaderboard: async () => {
@@ -251,6 +260,38 @@ export const api = {
       headers: getAuthHeaders(),
     });
     return res.json();
+  },
+
+    // Search Students by Roll No or Name (Admin only)
+  searchStudents: async (searchTerm, pageNumber = 1, pageSize = 10) => {
+    const url = `${API_BASE_URL}/api/students/search/${encodeURIComponent(searchTerm)}?PageNumber=${pageNumber}&PageSize=${pageSize}`;
+
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    return {
+      data: data,
+      rawResponse: response,
+    };
+  },
+
+  // Get Student Typing Reports with Pagination (Admin only)
+  getStudentTypingReports: async (studentId, pageNumber = 1, pageSize = 10) => {
+    const url = `${API_BASE_URL}/api/students/reports/${studentId}?PageNumber=${pageNumber}&PageSize=${pageSize}`;
+
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+
+    const data = await response.json();
+
+    return {
+      data: data,
+      rawResponse: response,
+    };
   },
 
 };
