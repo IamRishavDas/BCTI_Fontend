@@ -6,22 +6,8 @@ import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
+import { EditIcon, PlusIcon, SearchIcon, SearchIconL, TrashIcon } from "../../static/Svg";
 
-function SearchIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#9ca3af" }}>
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-    </svg>
-  );
-}
 
 export default function CoursesList() {
   const [courses, setCourses] = useState([]);
@@ -77,13 +63,13 @@ export default function CoursesList() {
         onClick={() => navigate(`/admin/courses/edit/${row.courseId}`)}
         className="px-4 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer"
       >
-        Edit
+        <EditIcon/>
       </button>
       <button
         onClick={() => handleDelete(row.courseId)}
         className="px-4 py-1.5 text-xs font-medium bg-red-50 text-red-600 border border-red-100 rounded-xl hover:bg-red-100 transition-colors cursor-pointer"
       >
-        Delete
+        <TrashIcon/>
       </button>
     </div>
   );
@@ -109,7 +95,7 @@ export default function CoursesList() {
           {/* Search */}
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-              <SearchIcon />
+              <SearchIconL />
             </span>
             <input
               type="text"

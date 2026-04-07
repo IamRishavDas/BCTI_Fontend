@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
-import { AddBookIcon, AddPersonIcon, ArrowIcon, CoursesIcon, KeyIcon, StudentsIcon } from "../../static/Svg";
+import { AddBookIcon, AddPersonIcon, ArrowIcon, CoursesIcon, KeyIcon, SearchIcon, StudentsIcon } from "../../static/Svg";
 
 
 const STAT_CONFIG = [
@@ -23,6 +23,13 @@ const STAT_CONFIG = [
 ];
 
 const QUICK_ACTIONS = [
+  {
+    label: "Search Student",
+    description: "Find Student detail by roll no or name",
+    Icon: SearchIcon,
+    accent: { text: "#2563eb", bg: "#eff6ff", hoverBorder: "#93c5fd", hoverBg: "#eff6ff" },
+    href: "/admin/students/search"
+  },
   {
     label: "Reset Student Password",
     description: "Reset password for any student by Roll No",
@@ -239,7 +246,7 @@ export default function AdminDashboard() {
       {/* Quick actions */}
       <div className="bg-white rounded-3xl p-8 shadow">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
           {QUICK_ACTIONS.map((action, i) => (
             <QuickActionCard
               key={action.label}
