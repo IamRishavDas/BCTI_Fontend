@@ -1,7 +1,35 @@
+// src/components/admin/StudentForm.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
+
+function LockIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
+  );
+}
+
+function FieldWrapper({ label, hint, children }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-medium text-gray-700">{label}</label>
+      {children}
+      {hint && <p className="text-xs text-gray-400 flex items-center gap-1"><LockIcon />{hint}</p>}
+    </div>
+  );
+}
+
+const inputBase =
+  "w-full px-4 py-3 text-sm border rounded-2xl focus:outline-none transition-colors duration-150 bg-white";
+const inputNormal =
+  inputBase + " border-gray-200 focus:border-blue-500 text-gray-800 placeholder-gray-400";
+const inputDisabled =
+  inputBase + " border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed";
 
 export default function StudentForm() {
   const { id } = useParams();
@@ -26,7 +54,7 @@ export default function StudentForm() {
   }, [id]);
 
   const fetchCourses = async () => {
-    const res = await api.getCourseLookups(false); // only active courses
+    const res = await api.getCourseLookups(false);
     if (res.success) setCourses(res.data || []);
   };
 
@@ -53,7 +81,6 @@ export default function StudentForm() {
     let payload = { ...form };
 
     if (isEdit) {
-      // Remove fields not allowed in StudentUpdateDTO
       delete payload.rollNo;
       delete payload.enrolledDate;
       delete payload.password;
@@ -66,7 +93,6 @@ export default function StudentForm() {
         showError(res.message || res.Message || "Failed to update student");
       }
     } else {
-      // Create new student - full payload allowed
       const res = await api.createStudent(payload);
       if (res.success) {
         showSuccess("Student created successfully");
@@ -80,130 +106,152 @@ export default function StudentForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl p-10">
-      <h1 className="text-3xl font-semibold mb-8">
-        {isEdit ? "Edit Student" : "Add New Student"}
-      </h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">First Name</label>
-            <input
-              type="text"
-              value={form.firstName}
-              onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-              className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Last Name</label>
-            <input
-              type="text"
-              value={form.lastName}
-              onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-              className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600"
-              required
-            />
-          </div>
+    <div className="max-w-2xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="bg-white rounded-3xl shadow p-10"
+      >
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-semibold text-gray-900">
+            {isEdit ? "Edit Student" : "Add New Student"}
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">
+            {isEdit
+              ? "Update student details below"
+              : "Fill in the details to register a new student"}
+          </p>
         </div>
 
-        {/* Roll No - Editable when creating, Read-only when editing */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Roll Number</label>
-          <input
-            type="text"
-            value={form.rollNo}
-            onChange={(e) => !isEdit && setForm({ ...form, rollNo: e.target.value })}
-            disabled={isEdit}
-            placeholder="e.g. BCTI-0012"
-            className={`w-full px-5 py-4 border rounded-2xl focus:outline-none focus:border-blue-600 ${
-              isEdit ? "bg-gray-100 cursor-not-allowed" : ""
-            }`}
-            required={!isEdit}
-          />
-          {isEdit && (
-            <p className="text-xs text-gray-500 mt-1">Roll Number cannot be changed after creation</p>
-          )}
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name row */}
+          <div className="grid grid-cols-2 gap-4">
+            <FieldWrapper label="First Name">
+              <input
+                type="text"
+                value={form.firstName}
+                onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                className={inputNormal}
+                placeholder="e.g. Rahul"
+                required
+              />
+            </FieldWrapper>
+            <FieldWrapper label="Last Name">
+              <input
+                type="text"
+                value={form.lastName}
+                onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                className={inputNormal}
+                placeholder="e.g. Sharma"
+                required
+              />
+            </FieldWrapper>
+          </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Enrolled Date</label>
+          {/* Roll No */}
+          <FieldWrapper
+            label="Roll Number"
+            hint={isEdit ? "Roll Number cannot be changed after creation" : null}
+          >
             <input
-              type="date"
-              value={form.enrolledDate}
-              onChange={(e) => !isEdit && setForm({ ...form, enrolledDate: e.target.value })}
+              type="text"
+              value={form.rollNo}
+              onChange={(e) => !isEdit && setForm({ ...form, rollNo: e.target.value })}
               disabled={isEdit}
-              className={`w-full px-5 py-4 border rounded-2xl focus:outline-none focus:border-blue-600 ${
-                isEdit ? "bg-gray-100 cursor-not-allowed" : ""
-              }`}
+              placeholder="e.g. BCTI-0012"
+              className={isEdit ? inputDisabled : inputNormal}
               required={!isEdit}
             />
+          </FieldWrapper>
+
+          {/* Date + Sem */}
+          <div className="grid grid-cols-2 gap-4">
+            <FieldWrapper
+              label="Enrolled Date"
+              hint={isEdit ? "Cannot be changed after creation" : null}
+            >
+              <input
+                type="date"
+                value={form.enrolledDate}
+                onChange={(e) => !isEdit && setForm({ ...form, enrolledDate: e.target.value })}
+                disabled={isEdit}
+                className={isEdit ? inputDisabled : inputNormal}
+                required={!isEdit}
+              />
+            </FieldWrapper>
+
+            <FieldWrapper label="Current Semester">
+              <input
+                type="number"
+                value={form.currentSem}
+                onChange={(e) => setForm({ ...form, currentSem: parseInt(e.target.value) || 1 })}
+                className={inputNormal}
+                min="1"
+                max="20"
+                required
+              />
+            </FieldWrapper>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Current Semester</label>
-            <input
-              type="number"
-              value={form.currentSem}
-              onChange={(e) => setForm({ ...form, currentSem: parseInt(e.target.value) || 1 })}
-              className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600"
-              min="1"
-              max="20"
+          {/* Course select */}
+          <FieldWrapper label="Course">
+            <select
+              value={form.courseId}
+              onChange={(e) => setForm({ ...form, courseId: e.target.value })}
+              className={inputNormal + " cursor-pointer"}
               required
-            />
+            >
+              <option value="">Choose a course</option>
+              {courses.map((course) => (
+                <option key={course.courseId} value={course.courseId}>
+                  {course.courseName} ({course.courseCode})
+                </option>
+              ))}
+            </select>
+          </FieldWrapper>
+
+          {/* Password — create only */}
+          {!isEdit && (
+            <FieldWrapper label="Password">
+              <input
+                type="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className={inputNormal}
+                placeholder="Set a login password for the student or default password is Student@1234"
+              />
+            </FieldWrapper>
+          )}
+
+          {/* Divider */}
+          <div className="border-t border-gray-100 pt-2" />
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/admin/students")}
+              className="flex-1 py-3 text-sm font-medium text-gray-600 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <motion.button
+              type="submit"
+              disabled={loading}
+              whileTap={{ scale: 0.98 }}
+              className="flex-1 py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 rounded-2xl transition-colors cursor-pointer"
+            >
+              {loading
+                ? "Saving..."
+                : isEdit
+                ? "Update Student"
+                : "Create Student"}
+            </motion.button>
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">Select Course</label>
-          <select
-            value={form.courseId}
-            onChange={(e) => setForm({ ...form, courseId: e.target.value })}
-            className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600 cursor-pointer"
-            required
-          >
-            <option value="">Choose a Course</option>
-            {courses.map((course) => (
-              <option key={course.courseId} value={course.courseId}>
-                {course.courseName} ({course.courseCode})
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {!isEdit && (
-          <div>
-            <label className="block text-sm font-medium mb-2">Password (for login)</label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-600"
-              placeholder="Enter password for student"
-            />
-          </div>
-        )}
-
-        <div className="flex gap-4 pt-8">
-          <button
-            type="button"
-            onClick={() => navigate("/admin/students")}
-            className="flex-1 py-4 border-2 border-gray-300 hover:bg-gray-50 font-medium rounded-2xl transition-all cursor-pointer"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 py-4 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-2xl transition-all disabled:bg-blue-400 cursor-pointer"
-          >
-            {loading ? "Saving..." : isEdit ? "Update Student" : "Create Student"}
-          </button>
-        </div>
-      </form>
+        </form>
+      </motion.div>
     </div>
   );
 }

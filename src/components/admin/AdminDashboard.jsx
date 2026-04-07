@@ -1,14 +1,195 @@
+// src/components/admin/AdminDashboard.jsx
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { api } from "../../services/api";
-import StatsCard from "../common/StatsCard";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
 
+// ── Inline SVG icons ──────────────────────────────────────────────────────
+function StudentsIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+      <path d="M16 3.13a4 4 0 010 7.75"/>
+      <path d="M21 21v-2a4 4 0 00-3-3.87"/>
+    </svg>
+  );
+}
+function CoursesIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+    </svg>
+  );
+}
+function KeyIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="8" cy="15" r="5"/>
+      <path d="M13 15h8M17 12v6"/>
+    </svg>
+  );
+}
+function AddPersonIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="8" r="4"/>
+      <path d="M2 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"/>
+      <line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/>
+    </svg>
+  );
+}
+function AddBookIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+      <line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/>
+    </svg>
+  );
+}
+function ArrowIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+const STAT_CONFIG = [
+  {
+    key: "totalStudents",
+    label: "Total Students",
+    Icon: StudentsIcon,
+    accent: { text: "#2563eb", bg: "#eff6ff", border: "#bfdbfe" },
+  },
+  {
+    key: "totalCourses",
+    label: "Total Courses",
+    Icon: CoursesIcon,
+    accent: { text: "#d97706", bg: "#fffbeb", border: "#fde68a" },
+  },
+];
+
+const QUICK_ACTIONS = [
+  {
+    label: "Reset Student Password",
+    description: "Reset password for any student by Roll No",
+    Icon: KeyIcon,
+    accent: { text: "#2563eb", bg: "#eff6ff", hoverBorder: "#93c5fd", hoverBg: "#eff6ff" },
+    actionKey: "resetPassword",
+  },
+  {
+    label: "Add New Student",
+    description: "Register a new student in the system",
+    Icon: AddPersonIcon,
+    accent: { text: "#16a34a", bg: "#f0fdf4", hoverBorder: "#86efac", hoverBg: "#f0fdf4" },
+    href: "/admin/students/new",
+  },
+  {
+    label: "Add New Course",
+    description: "Create and publish a new course",
+    Icon: AddBookIcon,
+    accent: { text: "#d97706", bg: "#fffbeb", hoverBorder: "#fcd34d", hoverBg: "#fffbeb" },
+    href: "/admin/courses/new",
+  },
+];
+
+function StatCard({ config, value, loading, index }) {
+  const { label, Icon, accent } = config;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      className="bg-white rounded-3xl p-8 shadow"
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-sm text-gray-500">{label}</p>
+          <p
+            className="text-5xl font-bold mt-3"
+            style={{ color: accent.text }}
+          >
+            {loading ? (
+              <span className="inline-block w-16 h-10 bg-gray-100 rounded-xl animate-pulse" />
+            ) : (
+              value
+            )}
+          </p>
+        </div>
+        <div
+          className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+          style={{ background: accent.bg, color: accent.text, border: `1px solid ${accent.border}` }}
+        >
+          <Icon />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function QuickActionCard({ action, onClick, index }) {
+  const { label, description, Icon, accent } = action;
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 + index * 0.08 }}
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="text-left w-full p-7 rounded-3xl border-2 border-dashed transition-all duration-200 group"
+      style={{
+        borderColor: hovered ? accent.hoverBorder : "#e5e7eb",
+        background: hovered ? accent.hoverBg : "#ffffff",
+        cursor: "pointer",
+      }}
+    >
+      <div
+        className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5 transition-colors duration-200"
+        style={{
+          background: hovered ? accent.bg : "#f8fafc",
+          color: hovered ? accent.text : "#94a3b8",
+          border: `1px solid ${hovered ? accent.hoverBorder : "#f1f5f9"}`,
+        }}
+      >
+        <Icon />
+      </div>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3
+            className="font-semibold text-base transition-colors duration-200"
+            style={{ color: hovered ? accent.text : "#111827" }}
+          >
+            {label}
+          </h3>
+          {description && (
+            <p className="text-sm text-gray-400 mt-1">{description}</p>
+          )}
+        </div>
+        <span
+          className="mt-0.5 flex-shrink-0 transition-all duration-200"
+          style={{
+            color: hovered ? accent.text : "#d1d5db",
+            transform: hovered ? "translateX(3px)" : "translateX(0)",
+          }}
+        >
+          <ArrowIcon />
+        </span>
+      </div>
+    </motion.button>
+  );
+}
+
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalStudents: 0,
-    totalCourses: 0,
-  });
+  const [stats, setStats] = useState({ totalStudents: 0, totalCourses: 0 });
   const [loading, setLoading] = useState(true);
   const { promptInput, confirm } = useConfirm();
 
@@ -26,14 +207,17 @@ export default function AdminDashboard() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }).then(res => res.json())
+        }).then((res) => res.json()),
       ]);
 
       if (studentsRes.data?.success) {
-        setStats(prev => ({ ...prev, totalStudents: studentsRes.data.data?.length || 0 }));
+        setStats((prev) => ({
+          ...prev,
+          totalStudents: studentsRes.data.data?.length || 0,
+        }));
       }
       if (coursesCountRes.success) {
-        setStats(prev => ({ ...prev, totalCourses: coursesCountRes.data || 0 }));
+        setStats((prev) => ({ ...prev, totalCourses: coursesCountRes.data || 0 }));
       }
     } catch (error) {
       console.error(error);
@@ -43,32 +227,26 @@ export default function AdminDashboard() {
   };
 
   const handleResetPassword = async () => {
-    // 1. Get Roll No
     const rollNo = await promptInput({
       title: "Reset Student Password",
       message: "Enter the Roll Number of the student",
       placeholder: "e.g. BCTI-0123",
       confirmText: "Continue",
     });
-
     if (!rollNo || !rollNo.trim()) return;
 
     const trimmedRollNo = rollNo.trim();
 
-    // 2. Show Confirmation Modal
     const isConfirmed = await confirm({
       title: "Confirm Password Reset",
       message: `Are you sure you want to reset the password for student "${trimmedRollNo}"?`,
       confirmText: "Yes, Reset Password",
-      type: "warning"
+      type: "warning",
     });
-
     if (!isConfirmed) return;
 
-    // 3. Call API and ensure modal closes
     try {
       const result = await api.resetStudentPassword(trimmedRollNo);
-
       if (result.data?.success) {
         showSuccess(`Password reset successful for student ${trimmedRollNo}`);
       } else {
@@ -78,50 +256,55 @@ export default function AdminDashboard() {
       console.error(error);
       showError("Something went wrong. Please try again.");
     }
-    // Modal will close automatically because we awaited the confirm promise
+  };
+
+  const actionHandlers = {
+    resetPassword: handleResetPassword,
   };
 
   return (
     <div className="space-y-10">
-      <div>
-        <h1 className="text-4xl font-semibold text-gray-900 mb-2">Welcome back, Admin</h1>
-        <p className="text-gray-600">Here's an overview of BCTI Computer Training Institute</p>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <h1 className="text-4xl font-semibold text-gray-900">Welcome back, Admin</h1>
+        <p className="text-gray-500 mt-2">
+          Here's an overview of BCTI Computer Training Institute
+        </p>
+      </motion.div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {STAT_CONFIG.map((config, i) => (
+          <StatCard
+            key={config.key}
+            config={config}
+            value={stats[config.key]}
+            loading={loading}
+            index={i}
+          />
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <StatsCard title="Total Students" value={stats.totalStudents} icon="👨‍🎓" color="blue" />
-        <StatsCard title="Total Courses" value={stats.totalCourses} icon="📚" color="amber" />
-        {/* <StatsCard title="Active Batches" value="12" icon="🔄" color="emerald" />
-        <StatsCard title="This Month Intake" value="48" icon="📈" color="purple" /> */}
-      </div>
-
+      {/* Quick actions */}
       <div className="bg-white rounded-3xl p-8 shadow">
-        <h2 className="text-2xl font-semibold mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <button
-            onClick={handleResetPassword}
-            className="cursor-pointer p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-blue-600 hover:bg-blue-50 transition-all group text-left"
-          >
-            <div className="text-4xl mb-4">🔑</div>
-            <h3 className="font-semibold text-lg group-hover:text-blue-600">Reset Student Password</h3>
-            <p className="text-sm text-gray-500 mt-2">Reset password for any student by Roll No</p>
-          </button>
-
-          <button
-            onClick={() => window.location.href = "/admin/students/new"}
-            className="cursor-pointer p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-emerald-600 hover:bg-emerald-50 transition-all group text-left"
-          >
-            <div className="text-4xl mb-4">👨‍🎓</div>
-            <h3 className="font-semibold text-lg group-hover:text-emerald-600">Add New Student</h3>
-          </button>
-
-          <button
-            onClick={() => window.location.href = "/admin/courses/new"}
-            className="cursor-pointer p-8 border-2 border-dashed border-gray-300 rounded-3xl hover:border-amber-600 hover:bg-amber-50 transition-all group text-left"
-          >
-            <div className="text-4xl mb-4">📖</div>
-            <h3 className="font-semibold text-lg group-hover:text-amber-600">Add New Course</h3>
-          </button>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {QUICK_ACTIONS.map((action, i) => (
+            <QuickActionCard
+              key={action.label}
+              action={action}
+              index={i}
+              onClick={
+                action.actionKey
+                  ? actionHandlers[action.actionKey]
+                  : () => (window.location.href = action.href)
+              }
+            />
+          ))}
         </div>
       </div>
     </div>
