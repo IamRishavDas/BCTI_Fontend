@@ -211,4 +211,46 @@ export const api = {
     return res.json();
   },
 
+  // === NOTICES ===
+  getNotices: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/notices`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getNoticeById: async (id) => {
+    const res = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  // Admin only
+  createNotice: async (data) => {
+    const res = await fetch(`${API_BASE_URL}/api/notices`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  updateNotice: async (id, data) => {
+    const res = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  deleteNotice: async (id) => {
+    const res = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
 };

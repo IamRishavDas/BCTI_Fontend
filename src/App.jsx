@@ -19,6 +19,8 @@ import MyReports from "./components/student/MyReports"
 import TypingLeaderboard from "./components/student/TypingLeaderboard"
 import { isAdmin, isAuthenticated } from "./utils/auth"
 import NotFound from "./components/NotFound"
+import NoticesList from "./components/admin/NoticesList"
+import NoticeForm from "./components/admin/NoticeForm"
 
 function App() {
 
@@ -39,6 +41,9 @@ function App() {
           <Route path="courses/edit/:id" element={<CourseForm />} />
           <Route path="courses/deleted" element={<DeletedCourses />} />
           <Route path="student/leaderboard" element={<TypingLeaderboard />} />
+          <Route path="notices" element={<NoticesList />} />
+          <Route path="notices/new" element={<NoticeForm />} />
+          <Route path="notices/edit/:id" element={<NoticeForm />} />
         </Route>
 
         <Route 
