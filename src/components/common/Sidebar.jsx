@@ -30,7 +30,7 @@ const studentMenu = [
 const adminSections = [
   {
     title: "Overview",
-    items: [adminMenu[0]],
+    items: [adminMenu[0], adminMenu[10]],
   },
   {
     title: "Manage",
@@ -47,10 +47,6 @@ const adminSections = [
   {
     title: "Archive",
     items: [adminMenu[5], adminMenu[6]],
-  },
-  {
-    title: "Search",
-    items: [adminMenu[10]]
   },
 ];
 

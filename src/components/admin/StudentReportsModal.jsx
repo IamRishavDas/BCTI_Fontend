@@ -10,11 +10,13 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [stats, setStats] = useState({ avgSpeed: 0, avgAccuracy: 0, total: 0 });
 
   const pageSize = 8;
 
   useEffect(() => {
     if (isOpen && student?.id) {
+      setCurrentPage(1);
       fetchReports(1);
     }
   }, [isOpen, student]);
@@ -23,23 +25,35 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
     setLoading(true);
     try {
       const result = await api.getStudentTypingReports(student.id, page, pageSize);
-
       if (result.data?.success) {
-        setReports(result.data.data || []);
+        const data = result.data.data || [];
+        setReports(data);
 
-        const paginationHeader = result.rawResponse?.headers.get("x-pagination") ||
-                                result.rawResponse?.headers.get("X-Pagination");
+        // Compute quick stats from current page data
+        if (data.length > 0) {
+          const avgSpeed = Math.round(
+            data.reduce((s, r) => s + (r.typingSpeed ?? 0), 0) / data.length
+          );
+          const avgAccuracy = (
+            data.reduce((s, r) => s + (r.typingAccuracy ?? 0), 0) / data.length
+          ).toFixed(1);
+          setStats((prev) => ({ ...prev, avgSpeed, avgAccuracy }));
+        }
 
+        const paginationHeader =
+          result.rawResponse?.headers.get("x-pagination") ||
+          result.rawResponse?.headers.get("X-Pagination");
         if (paginationHeader) {
           try {
-            const metadata = JSON.parse(paginationHeader);
-            setTotalPages(metadata.TotalPages || 1);
+            const meta = JSON.parse(paginationHeader);
+            setTotalPages(meta.TotalPages || 1);
+            setStats((prev) => ({ ...prev, total: meta.TotalCount ?? 0 }));
           } catch (e) {
             console.error(e);
           }
         }
       }
-    } catch (error) {
+    } catch {
       showError("Failed to load reports");
     } finally {
       setLoading(false);
@@ -52,43 +66,106 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
     fetchReports(newPage);
   };
 
+  // Generate visible page numbers (max 5 shown)
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  };
+
   if (!student) return null;
+
+  const columns = [
+    {
+      header: "Date",
+      accessor: (row) =>
+        new Date(row.reportDate).toLocaleDateString("en-IN", {
+          day: "2-digit", month: "short", year: "numeric",
+        }),
+    },
+    { header: "Activity", key: "activityName" },
+    { header: "Description", key: "activityDescription" },
+    {
+      header: "Speed (WPM)",
+      accessor: (row) => (
+        <span className="font-medium text-blue-600">{row.typingSpeed}</span>
+      ),
+    },
+    {
+      header: "Accuracy (%)",
+      accessor: (row) => {
+        const val = row.typingAccuracy;
+        const color = val >= 90 ? "text-green-600" : val >= 75 ? "text-amber-600" : "text-red-500";
+        return <span className={`font-medium ${color}`}>{val}</span>;
+      },
+    },
+  ];
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[120] flex items-center justify-center p-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-[120] flex items-center justify-center p-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+            transition={{ duration: 0.18 }}
+            className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[88vh] overflow-hidden flex flex-col border border-gray-100"
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b flex justify-between items-center bg-gray-50">
-              <div>
-                <h2 className="text-2xl font-semibold">
-                  {student.firstName} {student.lastName} Reports
-                </h2>
-                <p className="text-gray-500">Roll No: {student.rollNo}</p>
+            <div className="flex items-start justify-between px-6 py-4 bg-gray-50 border-b border-gray-100 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-sm font-medium text-blue-700 shrink-0">
+                  {student.firstName?.[0]}{student.lastName?.[0]}
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-gray-900">
+                    {student.firstName} {student.lastName}
+                  </h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Roll no: {student.rollNo}
+                    {student.course?.courseName && ` · ${student.course.courseName}`}
+                  </p>
+                </div>
               </div>
               <button
                 onClick={onClose}
-                className="text-3xl text-gray-400 hover:text-gray-600"
+                className="cursor-pointer w-7 h-7 flex items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors text-sm shrink-0"
               >
                 ✕
               </button>
             </div>
 
-            {/* Reports Table */}
-            <div className="flex-1 overflow-auto p-8">
+            {/* Stats bar */}
+            {!loading && reports.length > 0 && (
+              <div className="grid grid-cols-3 gap-3 px-6 py-3 border-b border-gray-100 bg-white shrink-0">
+                <div className="bg-gray-50 rounded-lg px-4 py-2.5">
+                  <p className="text-xs text-gray-400">Avg speed</p>
+                  <p className="text-lg font-semibold text-blue-600 mt-0.5">
+                    {stats.avgSpeed} <span className="text-xs font-normal text-gray-400">WPM</span>
+                  </p>
+                </div>
+                <div className="bg-gray-50 rounded-lg px-4 py-2.5">
+                  <p className="text-xs text-gray-400">Avg accuracy</p>
+                  <p className="text-lg font-semibold text-green-600 mt-0.5">
+                    {stats.avgAccuracy}<span className="text-xs font-normal text-gray-400">%</span>
+                  </p>
+                </div>
+                <div className="bg-gray-50 rounded-lg px-4 py-2.5">
+                  <p className="text-xs text-gray-400">Total sessions</p>
+                  <p className="text-lg font-semibold text-gray-700 mt-0.5">{stats.total || reports.length}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Table */}
+            <div className="flex-1 overflow-auto">
               <DataTable
-                columns={[
-                  { header: "Date", accessor: (row) => new Date(row.reportDate).toLocaleDateString('en-IN') },
-                  { header: "Activity", key: "activityName" },
-                  { header: "Speed (WPM)", key: "typingSpeed" },
-                  { header: "Accuracy (%)", key: "typingAccuracy" },
-                ]}
+                columns={columns}
                 data={reports}
                 loading={loading}
                 emptyMessage="No reports found for this student."
@@ -97,24 +174,39 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="border-t p-6 flex justify-center gap-4">
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="px-6 py-3 border rounded-2xl disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <span className="px-8 py-3 border rounded-2xl bg-blue-50">
+              <div className="flex items-center justify-between px-6 py-3 border-t border-gray-100 bg-white shrink-0">
+                <span className="text-xs text-gray-400">
                   Page {currentPage} of {totalPages}
                 </span>
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="px-6 py-3 border rounded-2xl disabled:opacity-50"
-                >
-                  Next
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="cursor-pointer px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors"
+                  >
+                    ← Prev
+                  </button>
+                  {getPageNumbers().map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => handlePageChange(p)}
+                      className={`w-7 h-7 text-xs rounded-lg transition-colors cursor-pointer ${
+                        p === currentPage
+                          ? "bg-blue-600 text-white border border-blue-600"
+                          : "border border-gray-200 hover:bg-gray-50"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
+                    Next →
+                  </button>
+                </div>
               </div>
             )}
           </motion.div>
