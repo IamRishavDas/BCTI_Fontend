@@ -5,6 +5,7 @@ import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import { AddBookIcon, AddPersonIcon, ArrowIcon, CoursesIcon, KeyIcon, SearchIcon, StudentsIcon } from "../../static/Svg";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 const STAT_CONFIG = [
@@ -146,6 +147,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalStudents: 0, totalCourses: 0 });
   const [loading, setLoading] = useState(true);
   const { promptInput, confirm } = useConfirm();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDashboardData();
@@ -255,7 +257,7 @@ export default function AdminDashboard() {
               onClick={
                 action.actionKey
                   ? actionHandlers[action.actionKey]
-                  : () => (window.location.href = action.href)
+                  : () => navigate(action.href)
               }
             />
           ))}
