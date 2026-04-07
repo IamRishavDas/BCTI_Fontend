@@ -1,4 +1,3 @@
-// src/components/Notice.jsx
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { api } from "../services/api";
@@ -25,25 +24,30 @@ export default function Notice() {
     }
   };
 
-  // When user clicks on a notice → fetch full details
   const openNotice = async (noticeSummary) => {
     setModalLoading(true);
     setIsModalOpen(true);
-
     try {
       const res = await api.getNoticeById(noticeSummary.id);
       if (res.success && res.data) {
         setSelectedNotice(res.data);
       } else {
-        setSelectedNotice(noticeSummary); // fallback
+        setSelectedNotice(noticeSummary);
       }
     } catch (error) {
       console.error("Failed to load full notice:", error);
-      setSelectedNotice(noticeSummary); // fallback to summary
+      setSelectedNotice(noticeSummary);
     } finally {
       setModalLoading(false);
     }
   };
+
+  const formatDate = (dateStr) =>
+    new Date(dateStr).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
 
   return (
     <>
@@ -55,54 +59,67 @@ export default function Notice() {
       >
         <div className="bg-white border border-gray-200 rounded-3xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-blue-700 text-white px-8 py-5 flex items-center justify-between">
+          <div className="bg-gradient-to-br from-blue-700 to-blue-500 px-7 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center text-xl">📢</div>
-              <h2 className="text-2xl font-semibold tracking-tight">Latest Notices</h2>
+              <div className="w-9 h-9 bg-white/15 border border-white/20 rounded-xl flex items-center justify-center text-lg">
+                📢
+              </div>
+              <h2 className="text-[17px] font-semibold text-white tracking-tight">
+                Latest Notices
+              </h2>
             </div>
-            <span className="text-sm bg-white/20 px-4 py-1 rounded-full">Updated Today</span>
+            <span className="text-[11px] font-medium bg-white/15 border border-white/20 text-white px-3 py-1 rounded-full">
+              Updated Today
+            </span>
           </div>
 
           {/* Notice List */}
-          <div className="divide-y divide-gray-100 max-h-[520px] overflow-y-auto">
+          <div className="divide-y divide-gray-100 max-h-[520px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
             {notices.length > 0 ? (
-              notices.map((notice) => (
+              notices.map((notice, i) => (
                 <motion.div
                   key={notice.id}
-                  whileHover={{ backgroundColor: "#f0f9ff" }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
                   onClick={() => openNotice(notice)}
-                  className="px-8 py-7 hover:bg-blue-50/70 cursor-pointer transition-colors"
+                  className="px-6 py-1.5 cursor-pointer transition-colors hover:bg-blue-50/70 group relative"
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-900 leading-tight pr-4">
-                      {notice.title}
-                    </h3>
-                    <span className="text-xs font-medium text-gray-500 whitespace-nowrap bg-gray-100 px-3 py-1 rounded-full">
-                      {new Date(notice.startDate).toLocaleDateString('en-IN')}
-                    </span>
-                  </div>
+                  {/* Audience tag */}
+                  <span className="inline-block text-[10px] font-semibold uppercase tracking-wider text-blue-700 bg-blue-50 py-0.5 rounded-md mb-0.5">
+                    For: {notice.for}
+                  </span>
 
-                  <p className="text-sm text-gray-500 mt-1">
-                    Notice For: <span className="font-medium">{notice.for}</span>
-                  </p>
+                  {/* Title */}
+                  <h3 className="text-[14.5px] font-semibold text-gray-900 leading-snug pr-6 group-hover:text-blue-700 transition-colors">
+                    {notice.title}
+                  </h3>
 
-                  <div className="text-xs text-gray-400 mt-3">
-                    {new Date(notice.startDate).toLocaleDateString('en-IN')} — {new Date(notice.endDate).toLocaleDateString('en-IN')}
-                  </div>
-
-                  <p className="text-gray-600 text-[15px] leading-relaxed mt-3 line-clamp-2">
+                  {/* Body preview */}
+                  <p className="text-[13px] text-gray-500 leading-relaxed mt-2 line-clamp-2">
                     {notice.body}
                   </p>
+
+                  {/* Date range */}
+                  <p className="text-[11px] text-gray-400 mt-0.5">
+                    {formatDate(notice.startDate)} — {formatDate(notice.endDate)}
+                  </p>
+
+                  {/* Chevron */}
+                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 text-xl group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all">
+                    ›
+                  </span>
                 </motion.div>
               ))
             ) : (
-              <div className="p-12 text-center text-gray-400">No active notices at the moment</div>
+              <div className="py-16 text-center text-gray-400 text-sm">
+                No active notices at the moment
+              </div>
             )}
           </div>
         </div>
       </motion.div>
 
-      {/* Full Notice Detail Modal */}
       <NoticeModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
