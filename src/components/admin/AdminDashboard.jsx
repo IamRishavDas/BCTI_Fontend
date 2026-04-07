@@ -4,61 +4,8 @@ import { motion } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
+import { AddBookIcon, AddPersonIcon, ArrowIcon, CoursesIcon, KeyIcon, StudentsIcon } from "../../static/Svg";
 
-// ── Inline SVG icons ──────────────────────────────────────────────────────
-function StudentsIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
-      <path d="M16 3.13a4 4 0 010 7.75"/>
-      <path d="M21 21v-2a4 4 0 00-3-3.87"/>
-    </svg>
-  );
-}
-function CoursesIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-    </svg>
-  );
-}
-function KeyIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="8" cy="15" r="5"/>
-      <path d="M13 15h8M17 12v6"/>
-    </svg>
-  );
-}
-function AddPersonIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="10" cy="8" r="4"/>
-      <path d="M2 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"/>
-      <line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/>
-    </svg>
-  );
-}
-function AddBookIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-      <line x1="12" y1="7" x2="12" y2="13"/><line x1="9" y1="10" x2="15" y2="10"/>
-    </svg>
-  );
-}
-function ArrowIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"/>
-      <polyline points="12 5 19 12 12 19"/>
-    </svg>
-  );
-}
-// ─────────────────────────────────────────────────────────────────────────────
 
 const STAT_CONFIG = [
   {
