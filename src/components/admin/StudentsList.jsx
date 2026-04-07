@@ -6,35 +6,10 @@ import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
+import StudentReportsModal from "./StudentReportsModal"; // ✅ ADDED
+import { ChevronLeftIcon, ChevronRightIcon, EditIcon, PlusIcon, ReportsIcon, SearchIcon, SearchIconL, TrashIcon } from "../../static/Svg";
 
-function SearchIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "#9ca3af" }}>
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-  );
-}
-function PlusIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-    </svg>
-  );
-}
-function ChevronLeftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
-  );
-}
-function ChevronRightIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-  );
-}
+
 
 export default function StudentsList() {
   const [students, setStudents] = useState([]);
@@ -43,6 +18,10 @@ export default function StudentsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+
+  // ✅ ADDED
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   const pageSize = 10;
   const navigate = useNavigate();
@@ -61,6 +40,7 @@ export default function StudentsList() {
         const paginationHeader =
           result.rawResponse.headers.get("x-pagination") ||
           result.rawResponse.headers.get("X-Pagination");
+
         if (paginationHeader) {
           try {
             const metadata = JSON.parse(paginationHeader);
@@ -106,7 +86,9 @@ export default function StudentsList() {
   };
 
   const filteredStudents = students.filter((s) =>
-    `${s.firstName} ${s.lastName} ${s.rollNo}`.toLowerCase().includes(search.toLowerCase())
+    `${s.firstName} ${s.lastName} ${s.rollNo}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
   );
 
   const columns = [
@@ -114,27 +96,45 @@ export default function StudentsList() {
     { header: "Name", accessor: (row) => `${row.firstName} ${row.lastName}` },
     { header: "Course", accessor: (row) => row.course?.courseName || "—" },
     { header: "Semester", key: "currentSem" },
-    { header: "Enrolled", accessor: (row) => new Date(row.enrolledDate).toLocaleDateString("en-IN") },
+    {
+      header: "Enrolled",
+      accessor: (row) =>
+        new Date(row.enrolledDate).toLocaleDateString("en-IN"),
+    },
   ];
 
+  // ✅ UPDATED ACTIONS
   const actions = (row) => (
     <div className="flex gap-2">
+      <button
+        onClick={() => {
+          setSelectedStudent(row);
+          setIsModalOpen(true);
+        }}
+        className="px-4 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition-colors cursor-pointer"
+      >
+        <ReportsIcon/>
+      </button>
+
       <button
         onClick={() => navigate(`/admin/students/edit/${row.id}`)}
         className="px-4 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer"
       >
-        Edit
+        <EditIcon/>
       </button>
+
+
       <button
         onClick={() => handleDelete(row.id)}
-        className="px-4 py-1.5 text-xs font-medium bg-red-50 text-red-600 border border-red-100 rounded-xl hover:bg-red-100 transition-colors cursor-pointer"
+        className="px-4 py-1.5 text-xs font-medium bg-red-50 text-red-600 border border-red-100 rounded-xl hover:bg-red-200 transition-colors cursor-pointer"
       >
-        Delete
+        <TrashIcon/>
       </button>
     </div>
   );
 
-  const rangeStart = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const rangeStart =
+    totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const rangeEnd = Math.min(currentPage * pageSize, totalCount);
 
   return (
@@ -146,7 +146,9 @@ export default function StudentsList() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-4xl font-semibold text-gray-900">All Students</h1>
+          <h1 className="text-4xl font-semibold text-gray-900">
+            All Students
+          </h1>
           {!loading && (
             <p className="text-sm text-gray-400 mt-1">
               {totalCount} student{totalCount !== 1 ? "s" : ""} enrolled
@@ -158,7 +160,7 @@ export default function StudentsList() {
           {/* Search */}
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-              <SearchIcon />
+              <SearchIconL />
             </span>
             <input
               type="text"
@@ -198,16 +200,9 @@ export default function StudentsList() {
 
       {/* Pagination */}
       {!loading && totalCount > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex items-center justify-between px-1"
-        >
+        <motion.div className="flex items-center justify-between px-1">
           <p className="text-sm text-gray-400">
-            Showing{" "}
-            <span className="font-medium text-gray-700">{rangeStart}–{rangeEnd}</span>{" "}
-            of{" "}
+            Showing <span className="font-medium text-gray-700">{rangeStart}–{rangeEnd}</span> of{" "}
             <span className="font-medium text-gray-700">{totalCount}</span> students
           </p>
 
@@ -215,7 +210,7 @@ export default function StudentsList() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="p-2 border border-gray-200 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
+              className="p-2 border border-gray-200 rounded-xl disabled:opacity-40 cursor-pointer"
             >
               <ChevronLeftIcon />
             </button>
@@ -251,13 +246,20 @@ export default function StudentsList() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="p-2 border border-gray-200 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
+              className="p-2 border border-gray-200 rounded-xl disabled:opacity-40 cursor-pointer"
             >
               <ChevronRightIcon />
             </button>
           </div>
         </motion.div>
       )}
+
+      {/* ✅ MODAL */}
+      <StudentReportsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        student={selectedStudent}
+      />
     </div>
   );
 }

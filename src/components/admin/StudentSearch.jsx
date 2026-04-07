@@ -4,6 +4,7 @@ import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
 import { showError } from "../../utils/toast";
 import StudentReportsModal from "./StudentReportsModal";
+import { ReportsIcon } from "../../static/Svg";
 
 export default function StudentSearch() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -115,7 +116,7 @@ export default function StudentSearch() {
       onClick={() => { setSelectedStudent(row); setIsModalOpen(true); }}
       className="px-3.5 py-1.5 text-xs font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
     >
-      Reports
+      <ReportsIcon/>
     </button>
   );
 
