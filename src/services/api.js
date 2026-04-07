@@ -172,4 +172,43 @@ export const api = {
     });
     return res.json();
   },
+
+    // === STUDENT REPORTS ===
+  createDailyReport: async (data) => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
+
+  getMyReports: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  getTypingLeaderboard: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports/typing-leaderboard`, {
+      headers: getAuthHeaders(),
+    });
+    return res.json();
+  },
+
+  // Password Change (for both Student & Admin)
+  changePassword: async (currentPassword, newPassword) => {
+    const res = await fetch(`${API_BASE_URL}/api/password/change`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        currentPassword,
+        newPassword,
+        confirmPassword: newPassword,
+      }),
+    });
+    return res.json();
+  },
+
 };

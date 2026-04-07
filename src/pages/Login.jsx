@@ -1,15 +1,15 @@
+// src/components/Login.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { getUser } from "../utils/auth";
-import { showError } from "../utils/toast";
+import { showSuccess, showError } from "../utils/toast";
 
 export default function Login() {
   const [rollNo, setRollNo] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
 
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -22,9 +22,7 @@ export default function Login() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           rollNo: rollNo.trim(),
           password: password,
@@ -37,20 +35,21 @@ export default function Login() {
         localStorage.setItem("token", result.data);
 
         const user = getUser();
-        if(user.role.toLowerCase() === "admin"){
-          navigate("/admin/dashboard");
-        } else if(user.role.toLowerCase() === "student"){
-          navigate("/dashboard");
+
+        showSuccess(`Login successful as ${user.role}`);
+
+        // Correct Redirect
+        if (user.role.toLowerCase() === "admin") {
+          navigate("/admin/dashboard", { replace: true });
         } else {
-          showError("Role not found contact admin");
-          navigate("/");
+          navigate("/student/dashboard", { replace: true });
         }
       } else {
         setError(result.message || result.Message || "Invalid Roll Number or Password");
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Unable to connect to server. Please check if backend is running.");
+      console.error(err);
+      setError("Unable to connect to server");
     } finally {
       setLoading(false);
     }
@@ -63,7 +62,6 @@ export default function Login() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 font-medium transition-colors"
@@ -73,22 +71,18 @@ export default function Login() {
 
         <div className="bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
           <div className="text-center mb-10">
-            <div className="mx-auto mb-4">
-              <img 
-                src="/bcti-logo.jpg" 
-                alt="BCTI Logo" 
-                className="h-20 w-auto mx-auto object-contain"
-              />
-            </div>
-            <h2 className="text-3xl font-semibold text-gray-900">Login</h2>
+            <img 
+              src="/bcti-logo.jpg" 
+              alt="BCTI Logo" 
+              className="h-20 w-auto mx-auto object-contain mb-4"
+            />
+            <h2 className="text-3xl font-semibold text-gray-900">Student / Admin Login</h2>
             <p className="text-gray-500 mt-2">BCTI Computer Training Institute</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Roll Number
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Roll Number</label>
               <input
                 type="text"
                 value={rollNo}
@@ -100,9 +94,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <input
                 type="password"
                 value={password}
@@ -131,7 +123,7 @@ export default function Login() {
           </form>
 
           <p className="text-center text-gray-500 text-sm mt-8">
-            Forgot password? Contact your administrator.
+            Forgot password? Contact administrator.
           </p>
         </div>
       </motion.div>
