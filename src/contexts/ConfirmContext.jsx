@@ -7,7 +7,6 @@ const ConfirmContext = createContext(null);
 export const useConfirm = () => {
   const context = useContext(ConfirmContext);
   if (!context) {
-    // console.warn("useConfirm called outside ConfirmProvider. Returning dummy functions.");
     return {
       confirm: async () => false,
       promptInput: async () => null,
@@ -22,6 +21,16 @@ export const ConfirmProvider = ({ children }) => {
 
   const confirm = useCallback((options = {}) => {
     return new Promise((resolve) => {
+      const handleConfirm = () => {
+        resolve(true);
+        setConfirmState({ isOpen: false, config: {} });  
+      };
+
+      const handleCancel = () => {
+        resolve(false);
+        setConfirmState({ isOpen: false, config: {} });  
+      };
+
       setConfirmState({
         isOpen: true,
         config: {
@@ -30,8 +39,8 @@ export const ConfirmProvider = ({ children }) => {
           confirmText: options.confirmText || "Confirm",
           cancelText: options.cancelText || "Cancel",
           type: options.type || "danger",
-          onConfirm: () => resolve(true),
-          onCancel: () => resolve(false),
+          onConfirm: handleConfirm,     
+          onCancel: handleCancel,        
         }
       });
     });
@@ -39,6 +48,16 @@ export const ConfirmProvider = ({ children }) => {
 
   const promptInput = useCallback((options = {}) => {
     return new Promise((resolve) => {
+      const handleSubmit = (value) => {
+        resolve(value);
+        setInputState({ isOpen: false, config: {} });     
+      };
+
+      const handleCancel = () => {
+        resolve(null);
+        setInputState({ isOpen: false, config: {} });     
+      };
+
       setInputState({
         isOpen: true,
         config: {
@@ -46,8 +65,8 @@ export const ConfirmProvider = ({ children }) => {
           message: options.message || "Please provide the information",
           placeholder: options.placeholder || "Enter value",
           confirmText: options.confirmText || "Submit",
-          onSubmit: (value) => resolve(value),
-          onCancel: () => resolve(null),
+          onSubmit: handleSubmit,      // ← Changed
+          onCancel: handleCancel,      // ← Changed
         }
       });
     });
@@ -59,20 +78,22 @@ export const ConfirmProvider = ({ children }) => {
 
       <ConfirmModal
         isOpen={confirmState.isOpen}
-        onClose={() => setConfirmState({ isOpen: false, config: {} })}
+        onClose={() => {
+          confirmState.config.onCancel?.();           
+        }}
         onConfirm={() => {
-          confirmState.config.onConfirm?.();
-          setConfirmState({ isOpen: false, config: {} });
+          confirmState.config.onConfirm?.();          
         }}
         {...confirmState.config}
       />
 
       <InputModal
         isOpen={inputState.isOpen}
-        onClose={() => setInputState({ isOpen: false, config: {} })}
+        onClose={() => {
+          inputState.config.onCancel?.();             
+        }}
         onSubmit={(value) => {
-          inputState.config.onSubmit?.(value);
-          setInputState({ isOpen: false, config: {} });
+          inputState.config.onSubmit?.(value);        
         }}
         {...inputState.config}
       />
