@@ -5,42 +5,8 @@ import { useEffect, useState, useRef } from "react";
 import { useConfirm } from "../contexts/ConfirmContext";
 import { showSuccess, showError } from "../utils/toast";
 import { api } from "../services/api";
+import { ChevronIconNav, KeyIconNav, LogoutIconNav, UserIconNav } from "../static/Svg";
 
-function KeyIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="8" cy="15" r="5"/>
-      <path d="M13 15h8M17 12v6"/>
-    </svg>
-  );
-}
-
-function LogoutIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-      <polyline points="16 17 21 12 16 7"/>
-      <line x1="21" y1="12" x2="9" y2="12"/>
-    </svg>
-  );
-}
-
-function ChevronIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"/>
-    </svg>
-  );
-}
-
-function UserIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="4"/>
-      <path d="M4 20a8 8 0 0116 0"/>
-    </svg>
-  );
-}
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -228,7 +194,7 @@ export default function Navbar() {
                     color: "#2563eb",
                   }}
                 >
-                  <UserIcon />
+                  <UserIconNav />
                 </span>
                 <span className="hidden sm:inline">My Account</span>
                 <motion.span
@@ -236,7 +202,7 @@ export default function Navbar() {
                   transition={{ duration: 0.2 }}
                   style={{ color: "#94a3b8", display: "flex" }}
                 >
-                  <ChevronIcon />
+                  <ChevronIconNav />
                 </motion.span>
               </motion.button>
 
@@ -283,7 +249,7 @@ export default function Navbar() {
                       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
                       <span style={{ color: "#64748b" }}>
-                        <KeyIcon />
+                        <KeyIconNav />
                       </span>
                       Change Password
                     </button>
@@ -312,7 +278,7 @@ export default function Navbar() {
                       onMouseEnter={(e) => (e.currentTarget.style.background = "#fff1f2")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                     >
-                      <LogoutIcon />
+                      <LogoutIconNav />
                       Logout
                     </button>
                   </motion.div>
