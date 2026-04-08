@@ -92,7 +92,7 @@ function SpeedBadge({ value }) {
 function PageButton({ onClick, disabled, children, active }) {
   if (active) {
     return (
-      <span className="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-sm">
+      <span className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-sm">
         {children}
       </span>
     );
@@ -101,7 +101,7 @@ function PageButton({ onClick, disabled, children, active }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+      className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
     >
       {children}
     </button>

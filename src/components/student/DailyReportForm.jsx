@@ -224,7 +224,7 @@ export default function DailyReportForm() {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="px-4 py-2.5 text-sm font-semibold text-gray-600 rounded-xl border border-gray-200 hover:bg-white hover:border-gray-300 active:scale-95 transition-all"
+                className="cursor-pointer px-4 py-2.5 text-sm font-semibold text-gray-600 rounded-xl border border-gray-200 hover:bg-white hover:border-gray-300 active:scale-95 transition-all"
               >
                 Cancel
               </button>
@@ -232,7 +232,7 @@ export default function DailyReportForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                className="cursor-pointer px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
               >
                 {loading ? (
                   <>
