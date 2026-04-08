@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
+import { getTodayDate } from "../../utils/shared";
 
 const inputBase =
   "w-full px-4 py-3 text-sm border border-gray-200 rounded-2xl focus:outline-none focus:border-blue-500 transition-colors duration-150 bg-white text-gray-800 placeholder-gray-400";
@@ -130,6 +131,7 @@ export default function NoticeForm() {
                 onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                 className={inputBase}
                 required
+                min={getTodayDate()}
               />
             </FieldWrapper>
             <FieldWrapper label="End Date">
@@ -139,6 +141,7 @@ export default function NoticeForm() {
                 onChange={(e) => setForm({ ...form, endDate: e.target.value })}
                 className={inputBase}
                 required
+                min={getTodayDate()}
               />
             </FieldWrapper>
           </div>

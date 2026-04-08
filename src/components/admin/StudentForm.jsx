@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
+import { getTodayDate } from "../../utils/shared";
 
 function LockIcon() {
   return (
@@ -179,6 +180,7 @@ export default function StudentForm() {
                 disabled={isEdit}
                 className={isEdit ? inputDisabled : inputNormal}
                 required={!isEdit}
+                max={getTodayDate()}
               />
             </FieldWrapper>
 
