@@ -10,52 +10,48 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [stats, setStats] = useState({ avgSpeed: 0, avgAccuracy: 0, total: 0 });
+  const [summary, setSummary] = useState(null);   // ← Now using real summary
 
   const pageSize = 8;
 
   useEffect(() => {
     if (isOpen && student?.id) {
       setCurrentPage(1);
-      fetchReports(1);
+      fetchAllData(1);
     }
   }, [isOpen, student]);
 
-  const fetchReports = async (page) => {
+  const fetchAllData = async (page) => {
     setLoading(true);
     try {
-      const result = await api.getStudentTypingReports(student.id, page, pageSize);
-      if (result.data?.success) {
-        const data = result.data.data || [];
-        setReports(data);
+      // Fetch both reports + summary in parallel
+      const [reportsRes, summaryRes] = await Promise.all([
+        api.getStudentTypingReports(student.id, page, pageSize),
+        api.getStudentSummary(student.id)
+      ]);
 
-        // Compute quick stats from current page data
-        if (data.length > 0) {
-          const avgSpeed = Math.round(
-            data.reduce((s, r) => s + (r.typingSpeed ?? 0), 0) / data.length
-          );
-          const avgAccuracy = (
-            data.reduce((s, r) => s + (r.typingAccuracy ?? 0), 0) / data.length
-          ).toFixed(1);
-          setStats((prev) => ({ ...prev, avgSpeed, avgAccuracy }));
-        }
+      if (reportsRes.data?.success) {
+        setReports(reportsRes.data.data || []);
 
         const paginationHeader =
-          result.rawResponse?.headers.get("x-pagination") ||
-          result.rawResponse?.headers.get("X-Pagination");
+          reportsRes.rawResponse?.headers.get("x-pagination") ||
+          reportsRes.rawResponse?.headers.get("X-Pagination");
+
         if (paginationHeader) {
           try {
             const meta = JSON.parse(paginationHeader);
             setTotalPages(meta.TotalPages || 1);
-            setStats((prev) => ({ ...prev, total: meta.TotalCount ?? 0 }));
           } catch (e) {
-            // console.error(e);
-            showError("Failed to parse pagination header");
+            console.error(e);
           }
         }
       }
-    } catch {
-      showError("Failed to load reports");
+
+      if (summaryRes.success && summaryRes.data) {
+        setSummary(summaryRes.data);
+      }
+    } catch (err) {
+      showError("Failed to load student data");
     } finally {
       setLoading(false);
     }
@@ -64,10 +60,10 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
     setCurrentPage(newPage);
-    fetchReports(newPage);
+    fetchAllData(newPage);   // Re-fetch reports for new page
   };
 
-  // Generate visible page numbers (max 5 shown)
+  // Generate visible page numbers
   const getPageNumbers = () => {
     const pages = [];
     const maxVisible = 5;
@@ -141,24 +137,27 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
               </button>
             </div>
 
-            {/* Stats bar */}
-            {!loading && reports.length > 0 && (
+            {/* Stats bar - Now using real summary from API */}
+            {!loading && summary && (
               <div className="grid grid-cols-3 gap-3 px-6 py-3 border-b border-gray-100 bg-white shrink-0">
                 <div className="bg-gray-50 rounded-lg px-4 py-2.5">
                   <p className="text-xs text-gray-400">Avg speed</p>
                   <p className="text-lg font-semibold text-blue-600 mt-0.5">
-                    {stats.avgSpeed} <span className="text-xs font-normal text-gray-400">WPM</span>
+                    {Math.round(summary.avgTypingSpeed || 0)} 
+                    <span className="text-xs font-normal text-gray-400"> WPM</span>
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg px-4 py-2.5">
                   <p className="text-xs text-gray-400">Avg accuracy</p>
                   <p className="text-lg font-semibold text-green-600 mt-0.5">
-                    {stats.avgAccuracy}<span className="text-xs font-normal text-gray-400">%</span>
+                    {Math.round(summary.avgTypingAccuracy || 0)}%
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg px-4 py-2.5">
                   <p className="text-xs text-gray-400">Total sessions</p>
-                  <p className="text-lg font-semibold text-gray-700 mt-0.5">{stats.total || reports.length}</p>
+                  <p className="text-lg font-semibold text-gray-700 mt-0.5">
+                    {summary.sessions || 0}
+                  </p>
                 </div>
               </div>
             )}

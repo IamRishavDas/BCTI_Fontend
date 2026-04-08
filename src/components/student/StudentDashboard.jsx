@@ -115,7 +115,7 @@ function EmptyState({ onAction }) {
       <p className="text-xs text-gray-400 mb-5">Submit your first session to start tracking progress</p>
       <button
         onClick={onAction}
-        className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:scale-95 transition-all"
+        className="cursor-pointer px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:scale-95 transition-all"
       >
         Submit first report
       </button>
@@ -124,25 +124,34 @@ function EmptyState({ onAction }) {
 }
 
 export default function StudentDashboard() {
-  const [myReports,    setMyReports]    = useState([]);
-  const [loading,      setLoading]      = useState(true);
-  const [totalReports, setTotalReports] = useState(0);
+  const [summary, setSummary] = useState(null);
+  const [myReports, setMyReports] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => { fetchMyReports(); }, []);
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-  const fetchMyReports = async () => {
+  const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const result = await api.getMyReports(1, 4);
-      if (result.data?.success) {
-        setMyReports(result.data.data || []);
-        setTotalReports(result.data.data?.length || 0);
+      const [summaryRes, reportsRes] = await Promise.all([
+        api.getMySummary(),
+        api.getMyReports(1, 5)   // Last 5 reports for recent section
+      ]);
+
+      if (summaryRes.success && summaryRes.data) {
+        setSummary(summaryRes.data);
       } else {
-        showError(result.data?.message || "Failed to load your reports");
+        showError(summaryRes.data?.message || "Failed to load summary");
+      }
+
+      if (reportsRes.data?.success) {
+        setMyReports(reportsRes.data.data || []);
       }
     } catch {
-      showError("Unable to load your reports");
+      showError("Unable to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -173,20 +182,36 @@ export default function StudentDashboard() {
           </button>
         </motion.div>
 
-        {/* Stat Cards */}
+        {/* Stat Cards - Now using real summary from API */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SkeletonStatCard /><SkeletonStatCard /><SkeletonStatCard />
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <StatCard label="Total Reports"   value={totalReports}              accent="blue"    delay={0} />
-            <StatCard label="Latest Speed"    value={latest?.typingSpeed   ?? "—"} sub={latest ? "WPM" : ""} accent="emerald" delay={1} />
-            <StatCard label="Latest Accuracy" value={latest ? `${latest.typingAccuracy}%` : "—"} accent="amber" delay={2} />
+            <StatCard 
+              label="Total Reports"   
+              value={summary?.sessions ?? 0} 
+              accent="blue"    
+              delay={0} 
+            />
+            <StatCard 
+              label="Average Speed"    
+              value={summary?.avgTypingSpeed ? Math.round(summary.avgTypingSpeed) : "—"} 
+              sub="WPM" 
+              accent="emerald" 
+              delay={1} 
+            />
+            <StatCard 
+              label="Average Accuracy" 
+              value={summary?.avgTypingAccuracy ? `${Math.round(summary.avgTypingAccuracy)}%` : "—"} 
+              accent="amber" 
+              delay={2} 
+            />
           </div>
         )}
 
-        {/* Recent Reports */}
+        {/* Recent Reports - unchanged UI */}
         <motion.div
           variants={fadeUp} custom={3} initial="hidden" animate="visible"
           className="bg-white rounded-2xl border border-gray-100 overflow-hidden"

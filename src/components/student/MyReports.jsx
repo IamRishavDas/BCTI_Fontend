@@ -113,10 +113,7 @@ function Pagination({ currentPage, totalPages, totalCount, pageSize, onPageChang
     const range = [];
     const delta = 1;
     for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 || i === totalPages ||
-        (i >= currentPage - delta && i <= currentPage + delta)
-      ) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
         range.push(i);
       } else if (range[range.length - 1] !== "...") {
         range.push("...");
@@ -161,41 +158,52 @@ function Pagination({ currentPage, totalPages, totalCount, pageSize, onPageChang
 }
 
 export default function MyReports() {
-  const [reports,     setReports]     = useState([]);
-  const [loading,     setLoading]     = useState(true);
+  const [reports, setReports] = useState([]);
+  const [summary, setSummary] = useState(null);     // ← New
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages,  setTotalPages]  = useState(1);
-  const [totalCount,  setTotalCount]  = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const pageSize = 10;
 
-  useEffect(() => { fetchMyReports(currentPage); }, [currentPage]);
+  useEffect(() => {
+    fetchMyReports(currentPage);
+  }, [currentPage]);
 
   const fetchMyReports = async (page = 1) => {
     setLoading(true);
     try {
-      const result = await api.getMyReports(page, pageSize);
-      if (result.data?.success) {
-        setReports(result.data.data || []);
-        const raw =
-          result.rawResponse.headers.get("x-pagination") ||
-          result.rawResponse.headers.get("X-Pagination");
+      const [reportsRes, summaryRes] = await Promise.all([
+        api.getMyReports(page, pageSize),
+        api.getMySummary()                 // ← New summary call
+      ]);
+
+      if (reportsRes.data?.success) {
+        setReports(reportsRes.data.data || []);
+
+        const raw = reportsRes.rawResponse?.headers.get("x-pagination") ||
+                    reportsRes.rawResponse?.headers.get("X-Pagination");
+
         if (raw) {
           try {
             const m = JSON.parse(raw);
-            setTotalPages(m.TotalPages   || 1);
-            setTotalCount(m.TotalCount   || 0);
-            setCurrentPage(m.CurrentPage || page);
-          } catch { showError("Failed to parse pagination header"); }
+            setTotalPages(m.TotalPages || 1);
+            setTotalCount(m.TotalCount || 0);
+          } catch {}
         } else {
           setTotalPages(1);
-          setTotalCount(result.data.data?.length || 0);
+          setTotalCount(reportsRes.data.data?.length || 0);
         }
       } else {
-        showError(result.data?.message || "Failed to load your reports");
+        showError(reportsRes.data?.message || "Failed to load reports");
+      }
+
+      if (summaryRes.success && summaryRes.data) {
+        setSummary(summaryRes.data);
       }
     } catch {
-      showError("Unable to load your reports");
+      showError("Unable to load data");
     } finally {
       setLoading(false);
     }
@@ -207,20 +215,12 @@ export default function MyReports() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const avgSpeed    = reports.length
-    ? Math.round(reports.reduce((s, r) => s + r.typingSpeed, 0)    / reports.length)
-    : null;
-  const avgAccuracy = reports.length
-    ? Math.round(reports.reduce((s, r) => s + r.typingAccuracy, 0) / reports.length)
-    : null;
-
   const columns = [
     {
       header: "Date",
-      accessor: (row) =>
-        new Date(row.reportDate).toLocaleDateString("en-IN", {
-          day: "numeric", month: "short", year: "numeric",
-        }),
+      accessor: (row) => new Date(row.reportDate).toLocaleDateString("en-IN", {
+        day: "numeric", month: "short", year: "numeric",
+      }),
       cellClassName: "text-sm font-semibold text-gray-700 whitespace-nowrap",
     },
     {
@@ -247,7 +247,7 @@ export default function MyReports() {
     <div className="min-h-screen bg-gray-50/60 -m-8 p-6 sm:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
-        {/* ── Header ── */}
+        {/* Header - unchanged */}
         <motion.div variants={fadeUp} custom={0} initial="hidden" animate="visible">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
@@ -268,25 +268,25 @@ export default function MyReports() {
           </div>
         </motion.div>
 
-        {/* ── Stat Cards ── */}
+        {/* Stat Cards - Now using real summary from API */}
         <AnimatePresence>
-          {!loading && totalCount > 0 && (
+          {!loading && summary && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <StatCard label="Total Reports" value={totalCount}    color="blue"    delay={0} />
-              {avgSpeed    !== null && <StatCard label="Avg Speed"    value={avgSpeed}    sub="WPM" color="emerald" delay={1} />}
-              {avgAccuracy !== null && <StatCard label="Avg Accuracy" value={`${avgAccuracy}%`}    color="amber"   delay={2} />}
+              <StatCard label="Total Reports" value={summary.sessions} color="blue" delay={0} />
+              <StatCard label="Avg Speed" value={Math.round(summary.avgTypingSpeed)} sub="WPM" color="emerald" delay={1} />
+              <StatCard label="Avg Accuracy" value={`${Math.round(summary.avgTypingAccuracy)}%`} color="amber" delay={2} />
             </div>
           )}
         </AnimatePresence>
 
-        {/* ── Skeleton stat cards while loading ── */}
+        {/* Skeleton while loading */}
         {loading && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SkeletonCard /><SkeletonCard /><SkeletonCard />
           </div>
         )}
 
-        {/* ── Table Card ── */}
+        {/* Table - unchanged UI */}
         <motion.div
           variants={fadeUp}
           custom={3}
@@ -294,7 +294,6 @@ export default function MyReports() {
           animate="visible"
           className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
         >
-          {/* Table header bar */}
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-700">Session history</span>
             {!loading && (
@@ -313,7 +312,6 @@ export default function MyReports() {
             />
           </div>
 
-          {/* Pagination */}
           {!loading && totalPages > 1 && (
             <div className="px-6 pb-5">
               <Pagination
@@ -326,7 +324,6 @@ export default function MyReports() {
             </div>
           )}
         </motion.div>
-
       </div>
     </div>
   );

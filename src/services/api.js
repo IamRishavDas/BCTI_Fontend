@@ -1,5 +1,4 @@
 import { showError } from "../utils/toast";
-import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,9 +8,10 @@ const getAuthHeaders = () => ({
 });
 
 const handleUnauthorized = () => {
-  const navigate = useNavigate();
   localStorage.clear();
-  navigate("/login");
+  setTimeout(() => {
+    window.location.replace("/login");
+  }, 1000);
   showError("Session expired");
 };
 
@@ -287,5 +287,22 @@ export const api = {
     const data = await response.json();
 
     return { data, rawResponse: response };
+  },
+
+  // === NEW SUMMARY ENDPOINTS ===
+  getMySummary: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports/summary`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  getStudentSummary: async (studentId) => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports/${studentId}/summary`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
   },
 };
