@@ -196,7 +196,7 @@ export default function MyReports() {
           setTotalCount(reportsRes.data.data?.length || 0);
         }
       } else {
-        showError(reportsRes.data?.message || "Failed to load reports");
+        showError(reportsRes.data?.message || reportsRes.data?.Message || "Failed to load reports");
       }
 
       if (summaryRes.success && summaryRes.data) {

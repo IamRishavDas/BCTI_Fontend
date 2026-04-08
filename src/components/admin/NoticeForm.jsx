@@ -61,7 +61,7 @@ export default function NoticeForm() {
       showSuccess(isEdit ? "Notice updated successfully" : "Notice created successfully");
       navigate("/admin/notices");
     } else {
-      showError(res.message || "Operation failed");
+      showError(res.message || res.Message || "Operation failed");
     }
     setLoading(false);
   };

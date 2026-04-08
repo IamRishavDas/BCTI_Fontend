@@ -105,7 +105,7 @@ export default function Navbar() {
       if (res.success) {
         showSuccess("Password changed successfully");
       } else {
-        showError(res.message || "Failed to change password");
+        showError(res.message || res.Message || "Failed to change password");
       }
     } catch {
       showError("Something went wrong");

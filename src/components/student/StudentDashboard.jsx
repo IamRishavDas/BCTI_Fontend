@@ -144,7 +144,7 @@ export default function StudentDashboard() {
       if (summaryRes.success && summaryRes.data) {
         setSummary(summaryRes.data);
       } else {
-        showError(summaryRes.data?.message || "Failed to load summary");
+        showError(summaryRes.data?.message || summaryRes.data?.Message || "Failed to load summary");
       }
 
       if (reportsRes.data?.success) {

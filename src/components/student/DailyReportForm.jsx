@@ -79,7 +79,7 @@ export default function DailyReportForm() {
       showSuccess("Daily report submitted!");
       navigate("/student/my-reports");
     } else {
-      showError(res.message || "Failed to submit report");
+      showError(res.message || res.Message || "Failed to submit report");
     }
     setLoading(false);
   };

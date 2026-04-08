@@ -37,7 +37,7 @@ export default function StudentSearch() {
         setStudents(result.data.data || []);
       } else {
         setStudents([]);
-        if (result.data?.message) showError(result.data.message);
+        if (result.data?.message || result.data?.Message) showError(result.data.message || result.data.Message);
       }
     } catch {
       showError("Search failed. Please try again.");
