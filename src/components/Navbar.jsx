@@ -45,7 +45,7 @@ function UserIcon() {
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { promptInput } = useConfirm();
+  const { promptInput, confirm } = useConfirm();   // ← Added confirm here
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -77,11 +77,27 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setMenuOpen(false);
+
+    // Show confirmation modal
+    const isConfirmed = await confirm({
+      title: "Logout Confirmation",
+      message: "Are you sure you want to logout?",
+      confirmText: "Yes, Logout",
+      cancelText: "Cancel",
+      type: "warning",          
+    });
+
+    if (!isConfirmed) return;
+
+    // Proceed with logout
     localStorage.clear();
     setIsLoggedIn(false);
     navigate("/");
+    
+    // Optional: Show success message
+    showSuccess("Logged out successfully");
   };
 
   const handleChangePassword = async () => {
@@ -277,7 +293,7 @@ export default function Navbar() {
 
                     {/* Logout */}
                     <button
-                      onClick={handleLogout}
+                      onClick={handleLogout}          // ← Now calls confirmation
                       style={{
                         width: "100%",
                         display: "flex",
