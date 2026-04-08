@@ -176,7 +176,8 @@ export default function AdminDashboard() {
         setStats((prev) => ({ ...prev, totalCourses: coursesCountRes.data || 0 }));
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      showError("Error while getting dashboard data");
     } finally {
       setLoading(false);
     }
@@ -209,7 +210,7 @@ export default function AdminDashboard() {
         showError(result.data?.message || result.data?.Message || "Failed to reset password");
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       showError("Something went wrong. Please try again.");
     }
   };

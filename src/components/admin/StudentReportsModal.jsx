@@ -49,7 +49,8 @@ export default function StudentReportsModal({ isOpen, onClose, student }) {
             setTotalPages(meta.TotalPages || 1);
             setStats((prev) => ({ ...prev, total: meta.TotalCount ?? 0 }));
           } catch (e) {
-            console.error(e);
+            // console.error(e);
+            showError("Failed to parse pagination header");
           }
         }
       }

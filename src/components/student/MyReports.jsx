@@ -37,7 +37,8 @@ export default function MyReports() {
             setTotalCount(metadata.TotalCount || 0);
             setCurrentPage(metadata.CurrentPage || page);
           } catch (e) {
-            console.error("Failed to parse pagination header", e);
+            // console.error("Failed to parse pagination header", e);
+            showError("Failed to parse pagination header");
           }
         } else {
           setTotalPages(1);
@@ -47,7 +48,7 @@ export default function MyReports() {
         showError(result.data?.message || "Failed to load your reports");
       }
     } catch (error) {
-      console.error("Error fetching reports:", error);
+      // console.error("Error fetching reports:", error);
       showError("Unable to load your reports");
     } finally {
       setLoading(false);

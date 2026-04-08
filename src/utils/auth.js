@@ -1,5 +1,6 @@
 // src/utils/auth.js
 import { jwtDecode } from "jwt-decode";
+import { showError } from "./toast";
 
 export const getToken = () => localStorage.getItem("token");
 
@@ -16,7 +17,8 @@ export const getUser = () => {
       name: decoded.name || decoded.RollNo,   // fallback
     };
   } catch (error) {
-    console.error("Failed to decode token", error);
+    // console.error("Failed to decode token", error);
+    showError("Failed to decode token");
     return null;
   }
 };

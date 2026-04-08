@@ -29,7 +29,7 @@ export default function StudentDashboard() {
         showError(result.data?.message || "Failed to load your reports");
       }
     } catch (error) {
-      console.error("Error fetching reports:", error);
+      // console.error("Error fetching reports:", error);
       showError("Unable to load your reports");
     } finally {
       setLoading(false);

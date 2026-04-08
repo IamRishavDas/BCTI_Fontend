@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { api } from "../services/api";
 import NoticeModal from "./common/NoticeModal";
+import { showError } from "../utils/toast";
 
 export default function Notice() {
   const [notices, setNotices] = useState([]);
@@ -20,7 +21,8 @@ export default function Notice() {
         setNotices(res.data || []);
       }
     } catch (error) {
-      console.error("Failed to fetch notices:", error);
+      // console.error("Failed to fetch notices:", error);
+      showError("Failed to face notices");
     }
   };
 
@@ -35,7 +37,8 @@ export default function Notice() {
         setSelectedNotice(noticeSummary);
       }
     } catch (error) {
-      console.error("Failed to load full notice:", error);
+      // console.error("Failed to load full notice:", error);
+      showError("Failed to load full notices");
       setSelectedNotice(noticeSummary);
     } finally {
       setModalLoading(false);

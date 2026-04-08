@@ -7,7 +7,7 @@ const ConfirmContext = createContext(null);
 export const useConfirm = () => {
   const context = useContext(ConfirmContext);
   if (!context) {
-    console.warn("useConfirm called outside ConfirmProvider. Returning dummy functions.");
+    // console.warn("useConfirm called outside ConfirmProvider. Returning dummy functions.");
     return {
       confirm: async () => false,
       promptInput: async () => null,

@@ -35,7 +35,8 @@ export default function StudentLookups() {
             setTotalCount(metadata.TotalCount || 0);
             setCurrentPage(metadata.CurrentPage || page);
           } catch (e) {
-            console.error("Failed to parse pagination header", e);
+            // console.error("Failed to parse pagination header", e);
+            showError("Failed to parse pagination error");
           }
         } else {
           setTotalPages(1);
@@ -45,7 +46,8 @@ export default function StudentLookups() {
         showError(result.data?.message || result.data?.Message || "Failed to load student lookups");
       }
     } catch (error) {
-      console.error("Error fetching lookups:", error);
+      // console.error("Error fetching lookups:", error);
+      showError("Error fetching lookups");
       showError("Unable to load data");
     } finally {
       setLoading(false);
