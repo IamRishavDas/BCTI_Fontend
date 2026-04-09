@@ -72,13 +72,20 @@ export default function Login() {
       if (response.ok && result.success) {
         localStorage.setItem("token", result.data);
         const user = getUser();
-        
-        if (user.role.toLowerCase() === "admin") {
+
+        if (!user || !user.role) {
+          throw new Error("Invalid token data");
+        }
+
+        const role = user.role.trim().toLowerCase();
+
+        showSuccess(`Login successful as ${role}`);
+
+        if (role === "admin") {
           navigate("/admin/dashboard", { replace: true });
         } else {
           navigate("/student/dashboard", { replace: true });
         }
-        showSuccess(`Login successful as ${user.role}`);
       } else {
         setError(result.message || result.Message || "Invalid Roll Number or Password");
       }

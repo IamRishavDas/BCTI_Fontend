@@ -1,6 +1,5 @@
-import Hero from "./components/Hero"
 import Navbar from "./components/Navbar"
-import { Route, Routes, useLocation } from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
 import Login from "./pages/Login"
 import AdminDashboard from "./components/admin/AdminDashboard"
 import AdminLayout from "./components/admin/AdminLayout"
@@ -23,15 +22,24 @@ import NoticesList from "./components/admin/NoticesList"
 import NoticeForm from "./components/admin/NoticeForm"
 import StudentSearch from "./components/admin/StudentSearch"
 import StudentReports from "./components/admin/StudentReports"
+import Home from "./pages/Home"
+import Courses from "./pages/Courses"
+import About from "./pages/About"
+import Notice from "./pages/Notice"
 
 function App() {
-
   return (
-      <ConfirmProvider>  
+    <ConfirmProvider>  
       <Routes>
-        <Route path="/" element={<><Navbar /><Hero /></>} />
+        {/* Public Routes with Navbar */}
+        <Route path="/" element={<><Navbar /><Home /></>} />
+        <Route path="/courses" element={<><Navbar /><Courses /></>} />
+        <Route path="/about" element={<><Navbar /><About /></>} />
+        <Route path="/notice" element={<><Navbar /><Notice /></>} />
+        
         <Route path="/login" element={<Login />} />
 
+        {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="students" element={<StudentsList />} />
@@ -50,6 +58,7 @@ function App() {
           <Route path="students/:studentId/reports" element={<StudentReports />} />
         </Route>
 
+        {/* Student Routes */}
         <Route 
           path="/student" 
           element={

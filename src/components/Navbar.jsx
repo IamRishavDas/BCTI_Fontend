@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
@@ -7,19 +6,26 @@ import { showSuccess, showError } from "../utils/toast";
 import { api } from "../services/api";
 import { ChevronIconNav, KeyIconNav, LogoutIconNav, UserIconNav } from "../static/Svg";
 
-
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { promptInput, confirm } = useConfirm();   // ← Added confirm here
+  const { promptInput, confirm } = useConfirm();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
+  const publicPages = [
+    { path: "/", label: "Home" },
+    { path: "/courses", label: "Courses" },
+    { path: "/about", label: "About" },
+    { path: "/notice", label: "Notice" },
+  ];
+
   useEffect(() => {
     const checkLoginStatus = () => {
       const token = localStorage.getItem("token");
-      if (location.pathname === "/" && token) {
+      const isPublicRoute = publicPages.some(page => location.pathname === page.path);
+      if (isPublicRoute && token) {
         localStorage.clear();
         setIsLoggedIn(false);
         return;
@@ -32,7 +38,6 @@ export default function Navbar() {
     return () => window.removeEventListener("storage", checkLoginStatus);
   }, [location.pathname]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -45,24 +50,19 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     setMenuOpen(false);
-
-    // Show confirmation modal
     const isConfirmed = await confirm({
       title: "Logout Confirmation",
       message: "Are you sure you want to logout?",
       confirmText: "Yes, Logout",
       cancelText: "Cancel",
-      type: "warning",          
+      type: "warning",
     });
 
     if (!isConfirmed) return;
 
-    // Proceed with logout
     localStorage.clear();
     setIsLoggedIn(false);
     navigate("/");
-    
-    // Optional: Show success message
     showSuccess("Logged out successfully");
   };
 
@@ -93,6 +93,8 @@ export default function Navbar() {
       showError("Something went wrong");
     }
   };
+
+  const isPublicPage = publicPages.some(page => location.pathname === page.path);
 
   return (
     <motion.nav
@@ -157,10 +159,44 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Center Navigation - Only show on public pages */}
+        {isPublicPage && (
+          <div className="hidden md:flex items-center gap-1">
+            {publicPages.map((page) => (
+              <button
+                key={page.path}
+                onClick={() => navigate(page.path)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 10,
+                  background: location.pathname === page.path ? "#eff6ff" : "transparent",
+                  color: location.pathname === page.path ? "#2563eb" : "#64748b",
+                  fontWeight: location.pathname === page.path ? 600 : 500,
+                  fontSize: 14,
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  if (location.pathname !== page.path) {
+                    e.currentTarget.style.background = "#f8fafc";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location.pathname !== page.path) {
+                    e.currentTarget.style.background = "transparent";
+                  }
+                }}
+              >
+                {page.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Right side */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {isLoggedIn ? (
-            /* Account dropdown */
             <div ref={menuRef} style={{ position: "relative" }}>
               <motion.button
                 onClick={() => setMenuOpen((v) => !v)}
@@ -180,7 +216,6 @@ export default function Navbar() {
                   transition: "background 0.15s",
                 }}
               >
-                {/* Avatar circle */}
                 <span
                   style={{
                     width: 28,
@@ -206,7 +241,6 @@ export default function Navbar() {
                 </motion.span>
               </motion.button>
 
-              {/* Dropdown */}
               <AnimatePresence>
                 {menuOpen && (
                   <motion.div
@@ -227,7 +261,6 @@ export default function Navbar() {
                       zIndex: 100,
                     }}
                   >
-                    {/* Change Password */}
                     <button
                       onClick={handleChangePassword}
                       style={{
@@ -254,12 +287,10 @@ export default function Navbar() {
                       Change Password
                     </button>
 
-                    {/* Divider */}
                     <div style={{ height: 1, background: "#f1f5f9", margin: "0 12px" }} />
 
-                    {/* Logout */}
                     <button
-                      onClick={handleLogout}          // ← Now calls confirmation
+                      onClick={handleLogout}
                       style={{
                         width: "100%",
                         display: "flex",
@@ -286,7 +317,6 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
           ) : (
-            /* Login button */
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
