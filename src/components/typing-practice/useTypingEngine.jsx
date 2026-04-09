@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { DURATION_SECONDS } from "./typingPresets";
+import { DURATION_SECONDS } from "./TypingPresets";
 
 export function useTypingEngine(targetText) {
   const [input, setInput] = useState("");
