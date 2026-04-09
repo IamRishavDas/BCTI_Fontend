@@ -1,56 +1,142 @@
-
-export default function ResultsModal({ wpm, accuracy, correctChars, incorrectChars, timeLeft, onRetry, onNew }) {
+export default function ResultsModal({
+  wpm,
+  accuracy,
+  correctChars,
+  incorrectChars,
+  timeLeft,
+  onRetry,
+  onNew,
+}) {
   const timeTaken = 600 - timeLeft;
   const mins = Math.floor(timeTaken / 60);
   const secs = timeTaken % 60;
 
   const grade =
     wpm >= 60 && accuracy >= 95
-      ? { label: "Excellent!", color: "#16a34a", bg: "#f0fdf4" }
+      ? { label: "Excellent", color: "#15803d", bg: "#f0fdf4", border: "#bbf7d0" }
       : wpm >= 40 && accuracy >= 85
-      ? { label: "Good Job!", color: "#2563eb", bg: "#eff6ff" }
-      : { label: "Keep Practicing!", color: "#f59e0b", bg: "#fffbeb" };
+      ? { label: "Good job", color: "#1a1a2e", bg: "#f8fafc", border: "#e2e8f0" }
+      : { label: "Keep going", color: "#b45309", bg: "#fffbeb", border: "#fde68a" };
+
+  const stats = [
+    { label: "WPM", value: wpm, color: "#1a1a2e" },
+    {
+      label: "Accuracy",
+      value: `${accuracy}%`,
+      color: accuracy >= 95 ? "#15803d" : accuracy >= 80 ? "#b45309" : "#b91c1c",
+    },
+    { label: "Correct", value: correctChars, color: "#15803d" },
+    { label: "Errors", value: incorrectChars, color: "#b91c1c" },
+  ];
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      style={{ background: "rgba(15,23,42,0.45)", backdropFilter: "blur(4px)" }}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 50,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "rgba(15,23,42,0.3)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
+      }}
     >
       <div
-        className="rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 flex flex-col gap-6"
-        style={{ background: "#ffffff", border: "1px solid #f1f5f9" }}
+        style={{
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          borderRadius: "20px",
+          padding: "32px",
+          width: "100%",
+          maxWidth: "420px",
+          margin: "0 16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "24px",
+          boxShadow: "0 24px 64px rgba(0,0,0,0.10)",
+          animation: "tpModalIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
+        }}
       >
-        {/* Grade badge */}
-        <div className="flex flex-col items-center gap-2">
-          <div
-            className="px-5 py-2 rounded-full text-sm font-bold"
-            style={{ background: grade.bg, color: grade.color }}
+        {/* Header */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <span
+            style={{
+              display: "inline-flex",
+              alignSelf: "flex-start",
+              padding: "4px 12px",
+              borderRadius: "99px",
+              fontSize: "12px",
+              fontWeight: 600,
+              fontFamily: "'DM Sans', sans-serif",
+              letterSpacing: "0.04em",
+              background: grade.bg,
+              color: grade.color,
+              border: `1px solid ${grade.border}`,
+            }}
           >
             {grade.label}
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900">Session Complete</h2>
-          <p className="text-sm text-gray-400">
-            Time: {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
+          </span>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: 600,
+              color: "#1a1a2e",
+              fontFamily: "'DM Sans', sans-serif",
+              marginTop: "4px",
+            }}
+          >
+            Session complete
+          </h2>
+          <p style={{ fontSize: "13px", color: "#94a3b8", fontFamily: "'DM Sans', sans-serif" }}>
+            Completed in {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
           </p>
         </div>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: "WPM", value: wpm, color: "#2563eb" },
-            { label: "Accuracy", value: `${accuracy}%`, color: accuracy >= 95 ? "#16a34a" : "#f59e0b" },
-            { label: "Correct Chars", value: correctChars, color: "#16a34a" },
-            { label: "Errors", value: incorrectChars, color: "#ef4444" },
-          ].map((s) => (
+        {/* Stats */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "10px",
+          }}
+        >
+          {stats.map((s) => (
             <div
               key={s.label}
-              className="flex flex-col items-center justify-center py-4 rounded-2xl"
-              style={{ background: "#f8fafc", border: "1px solid #f1f5f9" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "18px 12px",
+                borderRadius: "12px",
+                background: "#f8fafc",
+                border: "1px solid #f1f5f9",
+              }}
             >
-              <span className="text-3xl font-bold font-mono" style={{ color: s.color }}>
+              <span
+                style={{
+                  fontFamily: "'DM Mono', 'Fira Mono', monospace",
+                  fontSize: "28px",
+                  fontWeight: 500,
+                  color: s.color,
+                  lineHeight: 1,
+                }}
+              >
                 {s.value}
               </span>
-              <span className="text-xs font-medium mt-1" style={{ color: "#94a3b8" }}>
+              <span
+                style={{
+                  fontSize: "10px",
+                  color: "#94a3b8",
+                  marginTop: "6px",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
                 {s.label}
               </span>
             </div>
@@ -58,27 +144,56 @@ export default function ResultsModal({ wpm, accuracy, correctChars, incorrectCha
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
+        <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={onRetry}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold transition-all"
             style={{
-              background: "#eff6ff",
-              color: "#2563eb",
-              border: "1px solid #bfdbfe",
+              flex: 1,
+              padding: "12px",
+              borderRadius: "10px",
+              fontSize: "13px",
+              fontWeight: 600,
+              fontFamily: "'DM Sans', sans-serif",
+              cursor: "pointer",
+              background: "#f8fafc",
+              color: "#1a1a2e",
+              border: "1px solid #e2e8f0",
+              transition: "all 0.15s",
             }}
+            onMouseEnter={(e) => (e.target.style.background = "#f1f5f9")}
+            onMouseLeave={(e) => (e.target.style.background = "#f8fafc")}
           >
-            Try Again
+            Try again
           </button>
           <button
             onClick={onNew}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition-all"
-            style={{ background: "#2563eb" }}
+            style={{
+              flex: 1,
+              padding: "12px",
+              borderRadius: "10px",
+              fontSize: "13px",
+              fontWeight: 600,
+              fontFamily: "'DM Sans', sans-serif",
+              cursor: "pointer",
+              background: "#1a1a2e",
+              color: "#ffffff",
+              border: "1px solid #1a1a2e",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => (e.target.style.background = "#2d2d4e")}
+            onMouseLeave={(e) => (e.target.style.background = "#1a1a2e")}
           >
-            New Paragraph
+            New paragraph
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes tpModalIn {
+          from { opacity: 0; transform: scale(0.94) translateY(8px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

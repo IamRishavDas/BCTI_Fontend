@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { DURATION_SECONDS } from "./typingPresets";
 
 export function useTypingEngine(targetText) {
@@ -13,7 +13,6 @@ export function useTypingEngine(targetText) {
   const intervalRef = useRef(null);
   const startTimeRef = useRef(null);
 
-  // Compute per-character state
   const charStates = targetText.split("").map((ch, i) => {
     if (i >= input.length) return "pending";
     return input[i] === ch ? "correct" : "incorrect";
@@ -34,8 +33,6 @@ export function useTypingEngine(targetText) {
       const totalTyped = currentInput.length;
       const acc = totalTyped === 0 ? 100 : Math.round((correct / totalTyped) * 100);
       setAccuracy(acc);
-
-      // WPM = (correct characters / 5) / minutes elapsed
       if (startTimeRef.current) {
         const elapsed = (Date.now() - startTimeRef.current) / 1000 / 60;
         const calculatedWpm = elapsed > 0 ? Math.round(correct / 5 / elapsed) : 0;
@@ -62,12 +59,9 @@ export function useTypingEngine(targetText) {
           });
         }, 1000);
       }
-      // Don't allow typing beyond text length
       if (value.length > targetText.length) return;
       setInput(value);
       computeStats(value);
-
-      // Finished if all chars typed
       if (value.length === targetText.length) {
         clearInterval(intervalRef.current);
         setFinished(true);
@@ -93,7 +87,6 @@ export function useTypingEngine(targetText) {
     return () => clearInterval(intervalRef.current);
   }, []);
 
-  // Reset when targetText changes
   useEffect(() => {
     reset();
   }, [targetText]); // eslint-disable-line

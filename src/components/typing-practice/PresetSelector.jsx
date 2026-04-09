@@ -1,18 +1,24 @@
 export default function PresetSelector({ presets, activePresetId, onSelect }) {
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
       {presets.map((preset) => {
         const active = preset.id === activePresetId;
         return (
           <button
             key={preset.id}
             onClick={() => onSelect(preset.id)}
-            className="px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-150"
             style={{
-              background: active ? "#2563eb" : "#f1f5f9",
-              color: active ? "#ffffff" : "#64748b",
-              border: active ? "1px solid #2563eb" : "1px solid #e2e8f0",
+              padding: "5px 14px",
+              borderRadius: "99px",
+              fontSize: "12px",
+              fontWeight: 500,
+              fontFamily: "'DM Sans', sans-serif",
               cursor: "pointer",
+              transition: "all 0.15s",
+              border: active ? "1px solid #1a1a2e" : "1px solid #e2e8f0",
+              background: active ? "#1a1a2e" : "#ffffff",
+              color: active ? "#ffffff" : "#64748b",
+              letterSpacing: "0.01em",
             }}
           >
             {preset.label}
