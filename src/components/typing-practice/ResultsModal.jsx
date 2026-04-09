@@ -6,6 +6,7 @@ export default function ResultsModal({
   timeLeft,
   onRetry,
   onNew,
+  onClose
 }) {
   const timeTaken = 600 - timeLeft;
   const mins = Math.floor(timeTaken / 60);
@@ -45,6 +46,7 @@ export default function ResultsModal({
     >
       <div
         style={{
+          position: "relative",
           background: "#ffffff",
           border: "1px solid #e2e8f0",
           borderRadius: "20px",
@@ -59,6 +61,26 @@ export default function ResultsModal({
           animation: "tpModalIn 0.2s cubic-bezier(0.34,1.56,0.64,1)",
         }}
       >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "12px",
+            width: "32px",
+            height: "32px",
+            borderRadius: "8px",
+            border: "1px solid #e2e8f0",
+            background: "#f8fafc",
+            cursor: "pointer",
+            fontSize: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          ✕
+        </button>
         {/* Header */}
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <span
@@ -144,7 +166,7 @@ export default function ResultsModal({
         </div>
 
         {/* Actions */}
-        <div style={{ display: "flex", gap: "10px" }}>
+        {/* <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={onRetry}
             style={{
@@ -185,7 +207,7 @@ export default function ResultsModal({
           >
             New paragraph
           </button>
-        </div>
+        </div> */}
       </div>
 
       <style>{`
