@@ -163,6 +163,9 @@ export default function Login() {
                 }
                 required
                 autoFocus
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
               />
             </div>
 
@@ -186,6 +189,9 @@ export default function Login() {
                       : " border-gray-200 focus:border-blue-500")
                   }
                   required
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
                 />
                 <button
                   type="button"

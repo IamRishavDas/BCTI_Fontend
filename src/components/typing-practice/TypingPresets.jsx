@@ -3,55 +3,51 @@ export const PRESETS = [
     id: "general",
     label: "General",
     paragraphs: [
-      "The quick brown fox jumps over the lazy dog. A journey of a thousand miles begins with a single step. Practice makes perfect and patience is a virtue that rewards those who persist through difficulty.",
-      "Technology has transformed the way we communicate, work, and learn. Every day brings new innovations that challenge our understanding of what is possible. Embracing change while preserving core values is the hallmark of a resilient society.",
-      "Success is not final, failure is not fatal: it is the courage to continue that counts. Hard work and dedication open doors that talent alone cannot. The best investment you can make is in yourself and your skills.",
-      "Reading regularly expands vocabulary, sharpens focus, and deepens empathy. Books are windows to worlds we may never visit and voices we may never otherwise hear. A well-read person is rarely at a loss for words or ideas.",
-      "Discipline is the bridge between goals and accomplishment. Without consistent effort, even the most brilliant ideas remain unrealized. Build habits that serve your future self, even when your present self resists.",
+      `The quick brown fox jumps over the lazy dog, a sentence often used to test typing systems because it contains every letter of the alphabet. A journey of a thousand miles begins with a single step, but that step requires intention, courage, and persistence. Practice makes perfect, and patience is a virtue that rewards those who continue even when progress feels slow and invisible. Life is a continuous learning process where every experience, whether success or failure, contributes to personal growth and deeper understanding of the world around us.
+
+        Technology has transformed the way we communicate, work, and learn in ways that were unimaginable just a few decades ago. Every day brings new innovations that challenge our understanding of what is possible, from artificial intelligence to space exploration. Embracing change while preserving core values is the hallmark of a resilient society that adapts without losing its identity. The ability to balance tradition with innovation often determines long-term success in both personal and professional life.
+
+        Success is not final, and failure is not fatal; it is the courage to continue that truly counts. Hard work and dedication open doors that talent alone cannot unlock. The best investment you can make is in yourself, your skills, your discipline, and your mindset. Continuous self-improvement leads to long-term fulfillment, not just temporary achievement. Reading regularly expands vocabulary, sharpens focus, and deepens empathy, allowing individuals to connect with ideas and perspectives beyond their immediate surroundings.
+
+        Discipline is the bridge between goals and accomplishment. Without consistent effort, even the most brilliant ideas remain unrealized and eventually forgotten. Time management is one of the most valuable skills in the modern world, as those who master their schedule often achieve far more than those who simply work harder without direction. Resilience in the face of adversity separates those who succeed from those who give up too early, as every setback contains lessons that can guide future success.
+
+        Gratitude has the power to transform our perspective on life. When we focus on what we have rather than what we lack, we cultivate a mindset that attracts positivity and opportunities. Human connections form the foundation of a meaningful life, and investing in relationships creates a support system that sustains us through both success and struggle. Curiosity remains the engine of growth, pushing individuals to explore, question, and continuously evolve in an ever-changing world.`,
     ],
   },
+
   {
     id: "computer",
     label: "Computer Science",
     paragraphs: [
-      "A computer program is a sequence of instructions that a computer can execute to perform a specific task. Algorithms define the logic of a program, while data structures organize the information it operates on. Together, they form the foundation of software engineering.",
-      "Object-oriented programming organizes code into reusable objects that combine data and behavior. Concepts like inheritance, encapsulation, and polymorphism allow developers to model complex systems in a manageable way.",
-      "The internet is a global network of interconnected computers that communicate using standardized protocols. HTTP and HTTPS govern how web browsers and servers exchange data, enabling the World Wide Web as we know it today.",
-      "Version control systems like Git allow developers to track changes, collaborate on code, and revert to earlier states when bugs are introduced. Branching strategies enable teams to work in parallel without overwriting each other's contributions.",
-      "Machine learning algorithms learn patterns from data rather than following explicitly programmed rules. Neural networks, inspired by the human brain, have enabled breakthroughs in image recognition, natural language processing, and autonomous systems.",
+      `A computer program is a sequence of instructions that a computer executes to perform specific tasks efficiently and accurately. Algorithms define the logical steps required to solve problems, while data structures organize and store data in ways that optimize performance and accessibility. Together, they form the backbone of software engineering and enable developers to build scalable and reliable systems that power modern applications.
+
+        Object-oriented programming introduces a structured approach to software design by organizing code into reusable components called objects. Concepts such as inheritance, encapsulation, polymorphism, and abstraction help developers manage complexity while improving maintainability. These principles are widely used in large-scale systems where modularity and flexibility are essential for long-term success and collaboration among teams.
+
+        The internet is a vast global network that connects billions of devices, allowing seamless communication and data exchange across continents. Protocols like HTTP and HTTPS govern how web browsers interact with servers, enabling users to access websites, applications, and services instantly. Behind the scenes, technologies such as DNS, load balancing, and caching ensure reliability, scalability, and performance for millions of concurrent users.
+
+        Version control systems like Git have revolutionized the way developers collaborate on projects. By tracking changes, enabling branching strategies, and supporting pull requests, Git allows teams to work simultaneously without conflicts. This has become essential in modern development workflows, especially in open-source communities and distributed teams.
+
+        Machine learning represents a paradigm shift in computing, where systems learn patterns from data instead of relying on explicitly programmed rules. Neural networks, inspired by biological systems, have enabled breakthroughs in fields such as computer vision, natural language processing, and predictive analytics. However, these advancements also raise important ethical concerns regarding bias, transparency, and data privacy.
+
+        Cybersecurity plays a critical role in protecting digital infrastructure from threats such as hacking, malware, and data breaches. As reliance on technology grows, organizations must implement strong security measures, including encryption, authentication, and continuous monitoring. Cloud computing has further transformed the industry by providing scalable resources on demand, reducing the need for physical infrastructure while increasing accessibility and flexibility for businesses worldwide.`,
     ],
   },
+
   {
-    id: "science",
-    label: "Science",
+    id: "typing-master",
+    label: "Typing Master (Extreme)",
     paragraphs: [
-      "The scientific method is a systematic approach to understanding the natural world. It involves forming a hypothesis, conducting controlled experiments, collecting data, and drawing conclusions based on evidence. Reproducibility is central to scientific credibility.",
-      "Atoms are the basic units of matter, composed of protons, neutrons, and electrons. Chemical bonds form when atoms share or transfer electrons, creating molecules with entirely new properties from their constituent elements.",
-      "Evolution by natural selection explains the diversity of life on Earth. Organisms with traits better suited to their environment are more likely to survive and reproduce, passing those traits to future generations over many thousands of years.",
-      "The laws of thermodynamics govern energy in the universe. Energy cannot be created or destroyed, only converted from one form to another. Entropy, a measure of disorder, always increases in an isolated system over time.",
-      "Light travels at approximately 299,792 kilometers per second in a vacuum. It behaves both as a wave and as a particle, a duality that puzzled physicists for centuries and ultimately led to the development of quantum mechanics.",
-    ],
-  },
-  {
-    id: "literature",
-    label: "Literature",
-    paragraphs: [
-      "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness. Great literature captures the contradictions of human experience in ways that resonate across generations and cultures.",
-      "The art of storytelling is as old as humanity itself. Stories help us make sense of our experiences, transmit cultural values, and foster empathy by allowing us to inhabit perspectives far removed from our own everyday lives.",
-      "Metaphors do more than embellish language; they shape the way we think. When we describe argument as war or time as money, we unconsciously structure entire domains of experience around the implications of those comparisons.",
-      "Poetry compresses emotion and meaning into the smallest possible space. Every word is chosen with care, every line break deliberate. A great poem can say in twelve lines what a novel struggles to convey in three hundred pages.",
-      "The unreliable narrator is a literary device that forces readers to question the truth of what they are being told. By presenting a flawed or deceptive point of view, authors invite us to read between the lines and form our own judgments.",
-    ],
-  },
-  {
-    id: "business",
-    label: "Business",
-    paragraphs: [
-      "Effective communication is the cornerstone of every successful business. Clear, concise messaging reduces misunderstandings, accelerates decision-making, and builds the trust that sustains long-term professional relationships.",
-      "Entrepreneurship requires a tolerance for ambiguity and a willingness to learn from failure. The most successful founders are not those who avoid mistakes, but those who extract lessons quickly and adapt their strategies accordingly.",
-      "Supply chains connect raw material producers with manufacturers, distributors, and end consumers. Disruptions at any point in the chain can ripple outward, raising costs and delaying delivery across entire industries.",
-      "Customer satisfaction drives repeat business and generates word-of-mouth referrals that no advertising budget can replicate. Understanding what customers truly value, rather than what they say they want, is a competitive advantage.",
-      "Financial literacy empowers individuals and organizations to make informed decisions about saving, investing, and managing risk. Understanding concepts like compound interest, cash flow, and return on investment is essential in a modern economy.",
+      `Mastering touch typing requires consistent and deliberate practice over an extended period of time. It is not just about pressing keys quickly, but about developing muscle memory so that each finger instinctively knows where to move without conscious thought. Proper finger placement on the home row keys is the foundation upon which speed and accuracy are built, and ignoring this principle often leads to inefficient habits that are difficult to correct later.
+
+        Speed and accuracy must develop together, as focusing on one while neglecting the other can hinder overall progress. Typing quickly with frequent errors reduces efficiency because of the time spent correcting mistakes. On the other hand, typing too slowly in an attempt to maintain perfect accuracy limits productivity. The ideal balance is achieved through consistent practice that gradually increases speed while maintaining a high level of precision.
+
+        Ergonomics plays a vital role in long typing sessions. Maintaining proper posture, keeping the wrists relaxed, and positioning the keyboard at the correct height can prevent strain and long-term injuries. Taking regular breaks and stretching helps maintain physical comfort and mental focus, which are both essential for sustained performance.
+
+        Advanced typists often develop a rhythm, allowing them to type smoothly without interruptions. They learn to anticipate words and phrases, reducing hesitation and improving flow. This ability comes from repeated exposure to language patterns and frequent practice sessions that reinforce familiarity with commonly used words.
+
+        Modern typing tools measure not only words per minute but also consistency, accuracy, and error recovery time. These metrics provide a more comprehensive understanding of typing performance and help identify areas for improvement. With dedication and persistence, it is possible to achieve professional-level typing speeds exceeding 80 to 100 words per minute.
+
+        Despite advancements in voice recognition and artificial intelligence, typing remains a crucial skill. It offers precision, privacy, and control that other input methods cannot fully replicate. Whether writing code, drafting documents, or communicating online, efficient typing continues to be an essential ability in the digital age.`,
     ],
   },
 ];
