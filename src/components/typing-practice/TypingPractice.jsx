@@ -53,6 +53,10 @@ export default function TypingPractice() {
     setTargetText(pickRandom(preset.paragraphs));
   }, [activePresetId]);
 
+  const handleCloseModal = useCallback(() => {
+    window.location.reload();
+  }, []);
+
   const handleRetry = useCallback(() => {
     reset();
     setTimeout(() => inputRef.current?.focus(), 50);
@@ -90,6 +94,7 @@ export default function TypingPractice() {
               timeLeft={timeLeft}
               onRetry={handleRetry}
               onNew={handleNewAndReset}
+              onClose={handleCloseModal}
             />
           </motion.div>
         )}
