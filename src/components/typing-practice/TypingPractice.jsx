@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { PRESETS } from "./typingPresets";
+import { PRESETS } from "./TypingPresets";
 import { useTypingEngine } from "./useTypingEngine";
 import TimerDisplay from "./TimerDisplay";
 import StatsBar from "./StatsBar";
