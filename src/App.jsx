@@ -27,8 +27,15 @@ import Courses from "./pages/Courses"
 import About from "./pages/About"
 import Notice from "./pages/Notice"
 import TypingPractice from "./components/typing-practice/TypingPractice"
+import { checkForUpdates } from "./desktop-updater/updater"
+import { useEffect } from "react"
 
 function App() {
+
+    useEffect(() => {
+      checkForUpdates();
+    }, []);
+
   return (
     <ConfirmProvider>  
       <Routes>
