@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { isAdmin } from "../../utils/auth";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { AddBookIcon, AddNoticeIcon, AddPersonIcon, AdminDashIcon, CoursesIcon, HomeIcon, ListIcon, NoticeIcon, ReportIcon, SearchIcon, StudentsIcon, TrashIcon, TrophyIcon } from "../../static/Svg";
+import { AddBookIcon, AddNoticeIcon, AddPersonIcon, AdminDashIcon, CoursesIcon, HomeIcon, KeyboardIcon, ListIcon, NoticeIcon, ReportIcon, SearchIcon, StudentsIcon, TrashIcon, TrophyIcon } from "../../static/Svg";
 
 const adminMenu = [
   { label: "Dashboard",        path: "/admin/dashboard",          icon: AdminDashIcon  },
@@ -20,10 +20,11 @@ const adminMenu = [
 ];
 
 const studentMenu = [
-  { label: "Dashboard",     path: "/student/dashboard",  icon: HomeIcon      },
-  { label: "Submit Report", path: "/student/report",     icon: ReportIcon    },
-  { label: "My Reports",    path: "/student/my-reports", icon: ListIcon      },
-  { label: "Leaderboard",   path: "/student/leaderboard",icon: TrophyIcon    },
+  { label: "Dashboard",       path: "/student/dashboard",  icon: HomeIcon      },
+  { label: "Submit Report",   path: "/student/report",     icon: ReportIcon    },
+  { label: "My Reports",      path: "/student/my-reports", icon: ListIcon      },
+  { label: "Leaderboard",     path: "/student/leaderboard",icon: TrophyIcon    },
+  { label: "Typing Practice", path: "/student/typing",     icon: KeyboardIcon },
 ];
 
 // Group admin menu items into sections

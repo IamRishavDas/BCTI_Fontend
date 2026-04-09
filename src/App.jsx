@@ -26,6 +26,7 @@ import Home from "./pages/Home"
 import Courses from "./pages/Courses"
 import About from "./pages/About"
 import Notice from "./pages/Notice"
+import TypingPractice from "./components/typing-practice/TypingPractice"
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
           <Route path="report" element={<DailyReportForm />} />
           <Route path="my-reports" element={<MyReports />} />
           <Route path="leaderboard" element={<TypingLeaderboard />} />
+          <Route path="typing" element={<TypingPractice />} />
         </Route>
 
         <Route path="*" element={<NotFound/>} />
