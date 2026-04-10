@@ -26,6 +26,8 @@ export default function TypingPractice() {
   const [targetText, setTargetText] = useState(() =>
     pickRandom(PRESETS[0].paragraphs)
   );
+  // Incrementing this key forces TextDisplay + textarea to fully remount on reset
+  const [resetKey, setResetKey] = useState(0);
   const inputRef = useRef(null);
 
   const {
@@ -46,11 +48,13 @@ export default function TypingPractice() {
     setActivePresetId(id);
     const preset = PRESETS.find((p) => p.id === id);
     setTargetText(pickRandom(preset.paragraphs));
+    setResetKey((k) => k + 1);
   }, []);
 
   const handleNewParagraph = useCallback(() => {
     const preset = PRESETS.find((p) => p.id === activePresetId);
     setTargetText(pickRandom(preset.paragraphs));
+    setResetKey((k) => k + 1);
   }, [activePresetId]);
 
   const handleCloseModal = useCallback(() => {
@@ -59,6 +63,7 @@ export default function TypingPractice() {
 
   const handleRetry = useCallback(() => {
     reset();
+    setResetKey((k) => k + 1);
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [reset]);
 
@@ -71,13 +76,18 @@ export default function TypingPractice() {
     inputRef.current?.focus();
   }, []);
 
+  // Re-focus input whenever resetKey changes (covers retry + new paragraph)
+  useEffect(() => {
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }, [resetKey]);
+
   const progressPct =
     targetText.length > 0 ? (input.length / targetText.length) * 100 : 0;
 
   return (
     <div className="min-h-screen p-1" style={{ background: "#f8fafc" }}>
 
-      {/* Results modal — animated in/out */}
+      {/* Results modal */}
       <AnimatePresence>
         {finished && (
           <motion.div
@@ -104,10 +114,7 @@ export default function TypingPractice() {
 
         {/* Header */}
         <motion.div
-          variants={fadeUp}
-          custom={0}
-          initial="hidden"
-          animate="visible"
+          variants={fadeUp} custom={0} initial="hidden" animate="visible"
           className="flex items-center justify-between"
         >
           <div>
@@ -117,7 +124,6 @@ export default function TypingPractice() {
             </p>
           </div>
 
-          {/* Timer */}
           <div
             className="rounded-2xl p-1 flex items-center justify-center"
             style={{ background: "#ffffff", border: "1px solid #f1f5f9" }}
@@ -128,11 +134,7 @@ export default function TypingPractice() {
           <button
             onClick={handleRetry}
             className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-            style={{
-              background: "#eff6ff",
-              color: "#2563eb",
-              border: "1px solid #bfdbfe",
-            }}
+            style={{ background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe" }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
@@ -143,12 +145,7 @@ export default function TypingPractice() {
         </motion.div>
 
         {/* Stats */}
-        <motion.div
-          variants={fadeUp}
-          custom={1}
-          initial="hidden"
-          animate="visible"
-        >
+        <motion.div variants={fadeUp} custom={1} initial="hidden" animate="visible">
           <StatsBar
             wpm={wpm}
             accuracy={accuracy}
@@ -159,10 +156,7 @@ export default function TypingPractice() {
 
         {/* Preset selector */}
         <motion.div
-          variants={fadeUp}
-          custom={2}
-          initial="hidden"
-          animate="visible"
+          variants={fadeUp} custom={2} initial="hidden" animate="visible"
           className="rounded-2xl p-1 flex flex-col gap-3"
           style={{ background: "#ffffff", border: "1px solid #f1f5f9" }}
         >
@@ -188,12 +182,10 @@ export default function TypingPractice() {
           />
         </motion.div>
 
-        {/* Text display */}
+        {/* Text display + input — key prop forces full remount on every reset */}
         <motion.div
-          variants={fadeUp}
-          custom={3}
-          initial="hidden"
-          animate="visible"
+          key={resetKey}
+          variants={fadeUp} custom={3} initial="hidden" animate="visible"
           className="rounded-2xl p-2 flex flex-col gap-4"
           style={{ background: "#ffffff", border: "1px solid #f1f5f9" }}
         >
@@ -203,7 +195,6 @@ export default function TypingPractice() {
             currentIndex={input.length}
           />
 
-          {/* Animated progress bar */}
           <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: "#f1f5f9" }}>
             <motion.div
               className="h-full rounded-full"
@@ -214,7 +205,6 @@ export default function TypingPractice() {
             />
           </div>
 
-          {/* Hidden input */}
           <textarea
             ref={inputRef}
             value={input}
