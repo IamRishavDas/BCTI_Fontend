@@ -17,7 +17,7 @@ const coursesData = [
   },
   {
     id: 3,
-    name: "Web Design",
+    name: "Web Design & Development",
     duration: "4 Months",
     description: "Learn HTML, CSS, JavaScript and create responsive websites. Build your portfolio projects.",
     fees: "6000"
@@ -31,7 +31,7 @@ const coursesData = [
   },
   {
     id: 5,
-    name: "Programming",
+    name: "Programming Fundamental",
     duration: "6 Months",
     description: "Learn C, C++, and Python programming. Build problem-solving skills and logic.",
     fees: "8000"
@@ -62,7 +62,7 @@ const coursesData = [
 export default function Courses() {
   return (
     <section className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 py-20">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-5">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
