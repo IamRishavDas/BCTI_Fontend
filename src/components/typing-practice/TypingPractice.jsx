@@ -85,7 +85,7 @@ export default function TypingPractice() {
     targetText.length > 0 ? (input.length / targetText.length) * 100 : 0;
 
   return (
-    <div className="min-h-screen p-1" style={{ background: "#f8fafc" }}>
+    <div className="min-h-screen overflow-hidden p-1" style={{ background: "#f8fafc" }}>
 
       {/* Results modal */}
       <AnimatePresence>
