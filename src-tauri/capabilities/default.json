@@ -8,6 +8,9 @@
   "permissions": [
     "core:default",
     "updater:allow-check",
-    "updater:allow-download-and-install"
+    "updater:allow-download-and-install",
+    "dialog:allow-ask",
+    "dialog:allow-message",
+    "process:allow-restart"
   ]
 }
