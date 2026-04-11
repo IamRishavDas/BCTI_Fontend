@@ -1,18 +1,27 @@
 // src/components/admin/StudentSearch.jsx
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
-import { showError } from "../../utils/toast";
+import { showError, showSuccess } from "../../utils/toast";
+import { useConfirm } from "../../contexts/ConfirmContext";
 import StudentReportsModal from "./StudentReportsModal";
-import { ReportsIcon } from "../../static/Svg";
+import StudentScheduleModal from "./StudentScheduleModal";
+import { ClockIcon, EditIcon, ReportsIcon, TrashIcon } from "../../static/Svg";
 
 export default function StudentSearch() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Modals state
+  const [reportsModalOpen, setReportsModalOpen] = useState(false);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+
+  const navigate = useNavigate();
+  const { confirm } = useConfirm();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -37,7 +46,9 @@ export default function StudentSearch() {
         setStudents(result.data.data || []);
       } else {
         setStudents([]);
-        if (result.data?.message || result.data?.Message) showError(result.data.message || result.data.Message);
+        if (result.data?.message || result.data?.Message) {
+          showError(result.data.message || result.data.Message);
+        }
       }
     } catch {
       showError("Search failed. Please try again.");
@@ -59,12 +70,29 @@ export default function StudentSearch() {
   ];
 
   const getAvatarColor = (id) => {
-    const safeId = Number(id);
-    const index = isNaN(safeId)
-      ? 0
-      : Math.abs(safeId) % avatarColors.length;
-
+    const safeId = Number(id) || 0;
+    const index = Math.abs(safeId) % avatarColors.length;
     return avatarColors[index];
+  };
+
+  // Handle Delete
+  const handleDelete = async (row) => {
+    const isConfirmed = await confirm({
+      title: "Delete Student?",
+      message: "This will move the student to the deleted list.",
+      confirmText: "Yes, Delete",
+      type: "danger",
+    });
+
+    if (!isConfirmed) return;
+
+    const res = await api.softDeleteStudent(row.id);
+    if (res.success) {
+      showSuccess("Student moved to deleted list");
+      performSearch(debouncedSearchTerm); // Refresh current search
+    } else {
+      showError("Failed to delete student");
+    }
   };
 
   const columns = [
@@ -111,13 +139,51 @@ export default function StudentSearch() {
     },
   ];
 
+  // All action buttons
   const actions = (row) => (
-    <button
-      onClick={() => { setSelectedStudent(row); setIsModalOpen(true); }}
-      className="px-3.5 py-1.5 text-xs font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
-    >
-      <ReportsIcon/>
-    </button>
+    <div className="flex gap-1.5">
+      {/* Reports Button */}
+      <button
+        onClick={() => {
+          setSelectedStudent(row);
+          setReportsModalOpen(true);
+        }}
+        className="px-3 py-1.5 text-xs font-medium text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer"
+        title="View Reports"
+      >
+        <ReportsIcon/>
+      </button>
+
+      {/* Schedule Button */}
+      <button
+        onClick={() => {
+          setSelectedStudent(row);
+          setScheduleModalOpen(true);
+        }}
+        className="px-3 py-1.5 text-xs font-medium text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors cursor-pointer"
+        title="Manage Schedule"
+      >
+        <ClockIcon/>
+      </button>
+
+      {/* Edit Button */}
+      <button
+        onClick={() => navigate(`/admin/students/edit/${row.id}`)}
+        className="px-3 py-1.5 text-xs font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+        title="Edit Student"
+      >
+        <EditIcon/>
+      </button>
+
+      {/* Delete Button */}
+      <button
+        onClick={() => handleDelete(row)}
+        className="px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+        title="Delete Student"
+      >
+        <TrashIcon/>
+      </button>
+    </div>
   );
 
   return (
@@ -166,7 +232,6 @@ export default function StudentSearch() {
       {/* Results */}
       {debouncedSearchTerm && (
         <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
-          {/* Card header */}
           <div className="flex items-center justify-between px-5 py-3.5 bg-gray-50 border-b border-gray-100">
             <span className="text-sm font-medium text-gray-700">
               Results for "{debouncedSearchTerm}"
@@ -188,9 +253,16 @@ export default function StudentSearch() {
         </div>
       )}
 
+      {/* Modals */}
       <StudentReportsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={reportsModalOpen}
+        onClose={() => setReportsModalOpen(false)}
+        student={selectedStudent}
+      />
+
+      <StudentScheduleModal
+        isOpen={scheduleModalOpen}
+        onClose={() => setScheduleModalOpen(false)}
         student={selectedStudent}
       />
     </div>

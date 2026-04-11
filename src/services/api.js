@@ -305,4 +305,77 @@ export const api = {
     if (res.status === 401) handleUnauthorized();
     return res.json();
   },
+
+    // === SCHEDULES ===
+
+  // Student: Get own schedule
+  getMySchedule: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules/my-schedule`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  // Admin: Get any student's schedule
+  getStudentSchedule: async (studentId) => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules?studentId=${studentId}`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  // Admin: Create schedule for student
+  createSchedule: async (studentId, data) => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules/${studentId}`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  // Admin: Update schedule
+  updateSchedule: async (studentId, data) => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules/admin/${studentId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  // Admin: Delete schedule
+  deleteSchedule: async (studentId) => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules?studentId=${studentId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  // Admin: Toggle editable for student
+  toggleScheduleEditable: async (studentId, makeEditable) => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules/admin/${studentId}/edit?makeEditable=${makeEditable}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+    updateMySchedule: async (data) => {
+      const res = await fetch(`${API_BASE_URL}/api/schedules`, {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      if (res.status === 401) handleUnauthorized();
+      return res.json();
+    },
+
 };

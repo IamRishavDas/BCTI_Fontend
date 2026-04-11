@@ -4,6 +4,8 @@ import { api } from "../../services/api";
 import { showError } from "../../utils/toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import StudentScheduleModal from "./StudentScheduleModal";
+import { ClockIcon } from "../../static/Svg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 14 },
@@ -128,6 +130,7 @@ export default function StudentDashboard() {
   const [myReports, setMyReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -171,15 +174,26 @@ export default function StudentDashboard() {
             <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome back</h1>
             <p className="text-gray-500 mt-1 text-sm">Track your progress at BCTI</p>
           </div>
-          <button
-            onClick={() => navigate("/student/report")}
-            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:scale-95 transition-all"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            New report
-          </button>
+          <div className="flex items-center gap-3">
+            {/* New Report Button */}
+            <button
+              onClick={() => navigate("/student/report")}
+              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:scale-95 transition-all"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              New report
+            </button>
+
+            {/* My Schedule Button */}
+            <button
+              onClick={() => setIsScheduleModalOpen(true)}
+              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 active:scale-95 transition-all"
+            >
+              <ClockIcon/> My Schedule
+            </button>
+          </div>
         </motion.div>
 
         {/* Stat Cards - Now using real summary from API */}
@@ -251,6 +265,10 @@ export default function StudentDashboard() {
         </motion.div>
 
       </div>
+      <StudentScheduleModal
+        isOpen={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
+      />
     </div>
   );
 }
