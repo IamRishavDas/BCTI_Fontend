@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
+import TimeInput from "../common/TimeInput";
 
 const days = [
   { key: "sunday", label: "Sunday", short: "Sun" },
@@ -169,12 +170,10 @@ export default function StudentScheduleModal({ isOpen, onClose }) {
                           </div>
 
                           {isEditing ? (
-                            <input
-                              type="time"
-                              value={formData[day.key] || ""}
-                              onChange={(e) => setFormData({ ...formData, [day.key]: e.target.value })}
-                              className="border border-gray-300 rounded-lg px-3 py-2 text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-200 outline-none transition-all w-32"
-                            />
+                            <TimeInput
+                                value={formData[day.key] || ""}
+                                onChange={(v) => handleInputChange(day.key, v)}
+                                />
                           ) : (
                             <div className={`px-3 py-1.5 rounded-lg font-mono text-xs font-medium ${
                               hasValue
