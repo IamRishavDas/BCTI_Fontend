@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { isAdmin } from "../../utils/auth";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { AddBookIcon, AddNoticeIcon, AddPersonIcon, AdminDashIcon, CoursesIcon, HomeIcon, KeyboardIcon, ListIcon, NoticeIcon, ReportIcon, SearchIcon, StudentsIcon, TrashIcon, TrophyIcon } from "../../static/Svg";
+import { AddBookIcon, AddNoticeIcon, AddPersonIcon, AdminDashIcon, CoursesIcon, GraphIcon, HomeIcon, KeyboardIcon, ListIcon, NoticeIcon, ReportIcon, SearchIcon, StudentsIcon, TrashIcon, TrophyIcon } from "../../static/Svg";
 
 const adminMenu = [
   { label: "Dashboard",        path: "/admin/dashboard",          icon: AdminDashIcon  },
@@ -16,15 +16,16 @@ const adminMenu = [
   { label: "Leaderboard",      path: "/admin/student/leaderboard",icon: TrophyIcon     },
   { label: "Notices",          path: "/admin/notices",            icon: NoticeIcon     },
   { label: "Add Notice",       path: "/admin/notices/new",        icon: AddNoticeIcon  },
-  { label: "Search",           path: "/admin/students/search",    icon: SearchIcon  },
+  { label: "Search",           path: "/admin/students/search",    icon: SearchIcon     },
 ];
 
 const studentMenu = [
   { label: "Dashboard",       path: "/student/dashboard",  icon: HomeIcon      },
   { label: "Submit Report",   path: "/student/report",     icon: ReportIcon    },
   { label: "My Reports",      path: "/student/my-reports", icon: ListIcon      },
+  { label: "Typing History",  path: "/student/progress",   icon: GraphIcon     },
   { label: "Leaderboard",     path: "/student/leaderboard",icon: TrophyIcon    },
-  { label: "Typing Practice", path: "/student/typing",     icon: KeyboardIcon },
+  { label: "Typing Practice", path: "/student/typing",     icon: KeyboardIcon  },
 ];
 
 // Group admin menu items into sections
@@ -74,7 +75,7 @@ export default function Sidebar() {
       }}
     >
       {/* Logo / brand header */}
-      <div className="px-5 py-5 flex items-center gap-3" style={{ borderBottom: "1px solid #f1f5f9" }}>
+      <div className="px-5 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid #f1f5f9" }}>
         <div
           className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden"
           style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}

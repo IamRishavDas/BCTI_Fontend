@@ -368,14 +368,23 @@ export const api = {
     return res.json();
   },
 
-    updateMySchedule: async (data) => {
-      const res = await fetch(`${API_BASE_URL}/api/schedules`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
-      });
-      if (res.status === 401) handleUnauthorized();
-      return res.json();
-    },
+  updateMySchedule: async (data) => {
+    const res = await fetch(`${API_BASE_URL}/api/schedules`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+    // Student: Get My Typing Scores (for graphical view)
+  getMyTypingScores: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports/my-reports`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
 
 };

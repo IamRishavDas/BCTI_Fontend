@@ -304,7 +304,6 @@ export default function TypingLeaderboard() {
           {[
             { label: "Top Speed",      value: `${globalBest} WPM`, color: "text-emerald-600", delay: 0    },
             { label: "Avg Accuracy",   value: `${globalAcc}%`,     color: "text-amber-500",   delay: 0.1  },
-            { label: "Players",        value: leaderboard.length,  color: "text-blue-600",    delay: 0.2  },
             { label: "Total Sessions", value: totalSessions,        color: "text-purple-500",  delay: 0.3  },
           ].map((s) => (
             <motion.div

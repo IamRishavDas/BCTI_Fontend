@@ -29,6 +29,7 @@ import Notice from "./pages/Notice"
 import TypingPractice from "./components/typing-practice/TypingPractice"
 import { checkForUpdates } from "./desktop-updater/updater"
 import { useEffect } from "react"
+import TypingProgress from "./components/student/TypingProgress"
 
 function App() {
 
@@ -80,6 +81,7 @@ function App() {
           <Route path="my-reports" element={<MyReports />} />
           <Route path="leaderboard" element={<TypingLeaderboard />} />
           <Route path="typing" element={<TypingPractice />} />
+          <Route path="progress" element={<TypingProgress />} />
         </Route>
 
         <Route path="*" element={<NotFound/>} />
