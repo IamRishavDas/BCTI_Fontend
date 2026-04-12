@@ -492,4 +492,24 @@ export function ClockIcon({ active }) {
   );
 }
 
+export function GraphIcon({ active }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={getStroke(active)}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Axes */}
+      <path d="M3 3v18h18" />
+      {/* Graph line */}
+      <polyline points="4 14 8 10 12 13 16 6 20 10" />
+    </svg>
+  );
+}
+
 
