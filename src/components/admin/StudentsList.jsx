@@ -7,7 +7,8 @@ import DataTable from "../common/DataTable";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import StudentReportsModal from "./StudentReportsModal"; // ✅ ADDED
-import { ChevronLeftIcon, ChevronRightIcon, EditIcon, PlusIcon, ReportsIcon, SearchIcon, SearchIconL, TrashIcon } from "../../static/Svg";
+import { ChevronLeftIcon, ChevronRightIcon, ClockIcon, EditIcon, PlusIcon, ReportsIcon, SearchIcon, SearchIconL, TrashIcon } from "../../static/Svg";
+import StudentScheduleModal from "./StudentScheduleModal";
 
 
 
@@ -18,6 +19,7 @@ export default function StudentsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   // ✅ ADDED
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -103,22 +105,32 @@ export default function StudentsList() {
     },
   ];
 
-  // ✅ UPDATED ACTIONS
   const actions = (row) => (
-    <div className="flex gap-2">
+    <div className="flex gap-1.5">
       <button
         onClick={() => {
           setSelectedStudent(row);
           setIsModalOpen(true);
         }}
-        className="px-4 py-1.5 text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl hover:bg-indigo-100 transition-colors cursor-pointer"
+        className="px-3 py-1.5 text-xs font-medium text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer"
       >
         <ReportsIcon/>
       </button>
 
       <button
+        onClick={() => {
+          setSelectedStudent(row);
+          setIsScheduleModalOpen(true);  
+        }}
+        className="px-3 py-1.5 text-xs font-medium text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors cursor-pointer"
+        title="Manage Schedule"
+      >
+        <ClockIcon/>
+      </button>
+
+      <button
         onClick={() => navigate(`/admin/students/edit/${row.id}`)}
-        className="px-4 py-1.5 text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer"
+        className="px-3 py-1.5 text-xs font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
       >
         <EditIcon/>
       </button>
@@ -126,7 +138,7 @@ export default function StudentsList() {
 
       <button
         onClick={() => handleDelete(row.id)}
-        className="px-4 py-1.5 text-xs font-medium bg-red-50 text-red-600 border border-red-100 rounded-xl hover:bg-red-200 transition-colors cursor-pointer"
+        className="px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
       >
         <TrashIcon/>
       </button>
@@ -258,6 +270,12 @@ export default function StudentsList() {
       <StudentReportsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        student={selectedStudent}
+      />
+      {/* Schedule Modal */}
+      <StudentScheduleModal
+        isOpen={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
         student={selectedStudent}
       />
     </div>

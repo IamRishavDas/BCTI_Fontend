@@ -471,4 +471,25 @@ export function KeyboardIcon({ active }) {
   );
 }
 
+export function ClockIcon({ active }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={getStroke(active)}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Outer circle for clock face */}
+      <circle cx="12" cy="12" r="10" />
+
+      {/* Clock hands */}
+      <path d="M12 6v6l4 2" />
+    </svg>
+  );
+}
+
 
