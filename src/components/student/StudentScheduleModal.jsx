@@ -47,6 +47,19 @@ export default function StudentScheduleModal({ isOpen, onClose }) {
     }
   };
 
+  const handleInputChange = (dayKey, value) => {
+    setFormData({ ...formData, [dayKey]: value });
+  };
+
+  const prepareData = (data) => {
+    const prepared = {};
+    days.forEach((day) => {
+      const val = data[day.key];
+      prepared[day.key] = val && val.trim() !== "" ? val : null;
+    });
+    return prepared;
+  };
+
   const handleUpdate = async () => {
     const isConfirmed = await confirm({
       title: "Update Schedule?",
@@ -58,7 +71,7 @@ export default function StudentScheduleModal({ isOpen, onClose }) {
 
     setLoading(true);
     try {
-      const res = await api.updateMySchedule(formData);
+      const res = await api.updateMySchedule(prepareData(formData));
       if (res.success) {
         showSuccess("Schedule updated successfully");
         setIsEditing(false);
@@ -71,15 +84,6 @@ export default function StudentScheduleModal({ isOpen, onClose }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const prepareData = (data) => {
-    const prepared = {};
-    days.forEach((day) => {
-      const val = data[day.key];
-      prepared[day.key] = val && val.trim() !== "" ? val : null;
-    });
-    return prepared;
   };
 
   return (
@@ -171,9 +175,9 @@ export default function StudentScheduleModal({ isOpen, onClose }) {
 
                           {isEditing ? (
                             <TimeInput
-                                value={formData[day.key] || ""}
-                                onChange={(v) => handleInputChange(day.key, v)}
-                                />
+                              value={formData[day.key] || ""}
+                              onChange={(v) => handleInputChange(day.key, v)}
+                            />
                           ) : (
                             <div className={`px-3 py-1.5 rounded-lg font-mono text-xs font-medium ${
                               hasValue

@@ -207,7 +207,7 @@ export default function ClockPicker({ value, onChange, onClose }) {
               <button
                 key={p}
                 onClick={() => handlePeriodChange(p)}
-                className={`text-xs font-medium px-2 py-0.5 rounded transition-all ${period === p ? "text-white" : "text-blue-300 hover:text-blue-100"}`}
+                className={`cursor-pointer text-xs font-medium px-2 py-0.5 rounded transition-all ${period === p ? "text-white" : "text-blue-300 hover:text-blue-100"}`}
               >
                 {p}
               </button>
