@@ -512,4 +512,74 @@ export function GraphIcon({ active }) {
   );
 }
 
+export function TargetIcon({ active }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={getStroke(active)}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Outer circle */}
+      <circle cx="12" cy="12" r="10" />
+      {/* Middle circle */}
+      <circle cx="12" cy="12" r="6" />
+      {/* Inner circle */}
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+
+export function SpeedIcon({ active }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={getStroke(active)}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Outer circle for speedometer */}
+      <circle cx="12" cy="12" r="10" />
+
+      {/* Speedometer needle */}
+      <path d="M12 12 L16 8" />
+
+      {/* Tick marks */}
+      <path d="M12 2 v2" />
+      <path d="M4.93 4.93 l1.41 1.41" />
+      <path d="M2 12 h2" />
+      <path d="M4.93 19.07 l1.41 -1.41" />
+    </svg>
+  );
+}
+
+export function BothIcon({ active }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24" // Correct camelCase for JSX
+      fill="none"
+      stroke={getStroke(active)}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Left arrow */}
+      <path d="M10 6L4 12L10 18" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      {/* Right arrow */}
+      <path d="M14 6L20 12L14 18" />
+    </svg>
+  );
+}
+
 
