@@ -399,12 +399,18 @@ export const api = {
     return res.json();
   },
 
-  getMyTypingScoresFromPractice: async () => {
-    const res = await fetch(`${API_BASE_URL}/api/students/reports/my-reports`, {
-      headers: getAuthHeaders(),
-    });
-    if (res.status === 401) handleUnauthorized();
-    return res.json();
+  getMyTypingScoresFromPractice: async (pageNumber = 1, pageSize = 20) => {
+    const url = `${API_BASE_URL}/api/typingreports?PageNumber=${pageNumber}&PageSize=${pageSize}`;
+    const response = await fetch(url, { headers: getAuthHeaders() });
+    if (response.status === 401) handleUnauthorized();
+
+    const data = await response.json();
+    return {
+      data,
+      rawResponse: response,
+      ok: response.ok,
+      status: response.status
+    };
   },
 
 };

@@ -11,6 +11,8 @@ import ResultsModal from "./ResultsModal";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
 
+import TypingHistoryModal from "../student/TypingHistoryModal";
+
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   visible: (i = 0) => ({
@@ -30,7 +32,8 @@ export default function TypingPractice() {
     pickRandom(PRESETS[0].paragraphs)
   );
   const [resetKey, setResetKey] = useState(0);
-  const [hasSubmitted, setHasSubmitted] = useState(false);   // ← Key fix
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);   // ← New state
 
   const inputRef = useRef(null);
 
@@ -48,12 +51,12 @@ export default function TypingPractice() {
     reset,
   } = useTypingEngine(targetText);
 
-  // ====================== AUTO UPLOAD (ONCE ONLY) ======================
+  // Auto upload once when test finishes
   useEffect(() => {
     const submitTypingReport = async () => {
       if (!finished || hasSubmitted) return;
 
-      setHasSubmitted(true);   // Prevent multiple submissions
+      setHasSubmitted(true);
 
       const payload = {
         wpm: Math.round(wpm || 0),
@@ -63,7 +66,6 @@ export default function TypingPractice() {
 
       try {
         const result = await api.createTypingReport(payload);
-
         if (result?.success) {
           showSuccess("Typing report saved successfully!");
         } else {
@@ -79,21 +81,20 @@ export default function TypingPractice() {
       submitTypingReport();
     }
   }, [finished, wpm, correctChars, incorrectChars, hasSubmitted]);
-  // ===================================================================
 
   const handlePresetChange = useCallback((id) => {
     setActivePresetId(id);
     const preset = PRESETS.find((p) => p.id === id);
     setTargetText(pickRandom(preset.paragraphs));
     setResetKey((k) => k + 1);
-    setHasSubmitted(false);        // Reset submission flag on new test
+    setHasSubmitted(false);
   }, []);
 
   const handleNewParagraph = useCallback(() => {
     const preset = PRESETS.find((p) => p.id === activePresetId);
     setTargetText(pickRandom(preset.paragraphs));
     setResetKey((k) => k + 1);
-    setHasSubmitted(false);        // Reset submission flag
+    setHasSubmitted(false);
   }, [activePresetId]);
 
   const handleCloseModal = useCallback(() => {
@@ -103,7 +104,7 @@ export default function TypingPractice() {
   const handleRetry = useCallback(() => {
     reset();
     setResetKey((k) => k + 1);
-    setHasSubmitted(false);        // Reset on retry
+    setHasSubmitted(false);
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [reset]);
 
@@ -126,7 +127,7 @@ export default function TypingPractice() {
   return (
     <div className="min-h-screen overflow-hidden p-1" style={{ background: "#f8fafc" }}>
 
-      {/* Results modal */}
+      {/* Results Modal */}
       <AnimatePresence>
         {finished && (
           <motion.div
@@ -149,9 +150,15 @@ export default function TypingPractice() {
         )}
       </AnimatePresence>
 
+      {/* New Typing History Modal */}
+      <TypingHistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={() => setIsHistoryModalOpen(false)}
+      />
+
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
 
-        {/* Header - unchanged */}
+        {/* Header */}
         <motion.div
           variants={fadeUp} custom={0} initial="hidden" animate="visible"
           className="flex items-center justify-between"
@@ -170,20 +177,33 @@ export default function TypingPractice() {
             <TimerDisplay timeLeft={timeLeft} started={started} finished={finished} />
           </div>
 
-          <button
-            onClick={handleRetry}
-            className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-            style={{ background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe" }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-              <path d="M3 3v5h5" />
-            </svg>
-            Reset
-          </button>
+          <div className="flex items-center gap-3">
+            {/* New Button - View History */}
+            <button
+              onClick={() => setIsHistoryModalOpen(true)}
+              className="cursor-pointer flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all bg-white border border-gray-200 hover:border-gray-300"
+            >
+              <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg> 
+              View History
+            </button>
+
+            <button
+              onClick={handleRetry}
+              className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+              style={{ background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe" }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+              Reset
+            </button>
+          </div>
         </motion.div>
 
-        {/* Stats - unchanged */}
+        {/* Rest of your components remain exactly the same */}
         <motion.div variants={fadeUp} custom={1} initial="hidden" animate="visible">
           <StatsBar
             wpm={wpm}
@@ -193,7 +213,6 @@ export default function TypingPractice() {
           />
         </motion.div>
 
-        {/* Preset selector - unchanged */}
         <motion.div
           variants={fadeUp} custom={2} initial="hidden" animate="visible"
           className="rounded-2xl p-1 flex flex-col gap-3"
@@ -221,7 +240,6 @@ export default function TypingPractice() {
           />
         </motion.div>
 
-        {/* Text display + input - unchanged */}
         <motion.div
           key={resetKey}
           variants={fadeUp} custom={3} initial="hidden" animate="visible"
