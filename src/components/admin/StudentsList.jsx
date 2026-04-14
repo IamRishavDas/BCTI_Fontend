@@ -6,11 +6,21 @@ import { api } from "../../services/api";
 import DataTable from "../common/DataTable";
 import { showSuccess, showError } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
-import StudentReportsModal from "./StudentReportsModal"; // ✅ ADDED
-import { ChevronLeftIcon, ChevronRightIcon, ClockIcon, EditIcon, PlusIcon, ReportsIcon, SearchIcon, SearchIconL, TrashIcon } from "../../static/Svg";
+import StudentReportsModal from "./StudentReportsModal"; 
 import StudentScheduleModal from "./StudentScheduleModal";
+import StudentInfoModal from "./StudentInfoModal";   
 
-
+import { 
+  ChevronLeftIcon, 
+  ChevronRightIcon, 
+  ClockIcon, 
+  EditIcon, 
+  PlusIcon, 
+  ReportsIcon, 
+  TrashIcon,
+  EyeIcon,   
+  SearchIconL
+} from "../../static/Svg";
 
 export default function StudentsList() {
   const [students, setStudents] = useState([]);
@@ -19,10 +29,11 @@ export default function StudentsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
-  // ✅ ADDED
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Modals state
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);     // ← New
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const pageSize = 10;
@@ -39,9 +50,10 @@ export default function StudentsList() {
       const result = await api.getStudents(page, pageSize);
       if (result.data?.success) {
         setStudents(result.data.data || []);
-        const paginationHeader =
-          result.rawResponse.headers.get("x-pagination") ||
-          result.rawResponse.headers.get("X-Pagination");
+        
+        const paginationHeader = 
+          result.rawResponse?.headers.get("x-pagination") || 
+          result.rawResponse?.headers.get("X-Pagination");
 
         if (paginationHeader) {
           try {
@@ -49,13 +61,13 @@ export default function StudentsList() {
             setTotalPages(metadata.TotalPages || 1);
             setTotalCount(metadata.TotalCount || 0);
             setCurrentPage(metadata.CurrentPage || page);
-          } catch {}
+          } catch (e) {}
         } else {
           setTotalPages(1);
           setTotalCount(result.data.data?.length || 0);
         }
       } else {
-        showError(result.data?.message || result.data?.Message || "Failed to load students");
+        showError(result.data?.message || "Failed to load students");
       }
     } catch {
       showError("Unable to connect to server");
@@ -88,9 +100,7 @@ export default function StudentsList() {
   };
 
   const filteredStudents = students.filter((s) =>
-    `${s.firstName} ${s.lastName} ${s.rollNo}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
+    `${s.firstName} ${s.lastName} ${s.rollNo}`.toLowerCase().includes(search.toLowerCase())
   );
 
   const columns = [
@@ -100,67 +110,81 @@ export default function StudentsList() {
     { header: "Semester", key: "currentSem" },
     {
       header: "Enrolled",
-      accessor: (row) =>
-        new Date(row.enrolledDate).toLocaleDateString("en-IN"),
+      accessor: (row) => new Date(row.enrolledDate).toLocaleDateString("en-IN"),
     },
   ];
 
   const actions = (row) => (
     <div className="flex gap-1.5">
+      {/* Eye - View Full Info */}
       <button
         onClick={() => {
           setSelectedStudent(row);
-          setIsModalOpen(true);
+          setIsInfoModalOpen(true);
         }}
-        className="px-3 py-1.5 text-xs font-medium text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer"
+        className="px-3 py-1.5 text-xs font-medium text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition-colors cursor-pointer"
+        title="View Full Information"
       >
-        <ReportsIcon/>
+        <EyeIcon/>
       </button>
 
+      {/* Reports */}
       <button
         onClick={() => {
           setSelectedStudent(row);
-          setIsScheduleModalOpen(true);  
+          setIsReportsModalOpen(true);
+        }}
+        className="px-3 py-1.5 text-xs font-medium text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors cursor-pointer"
+        title="View Reports"
+      >
+        <ReportsIcon />
+      </button>
+
+      {/* Schedule */}
+      <button
+        onClick={() => {
+          setSelectedStudent(row);
+          setIsScheduleModalOpen(true);
         }}
         className="px-3 py-1.5 text-xs font-medium text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors cursor-pointer"
         title="Manage Schedule"
       >
-        <ClockIcon/>
+        <ClockIcon />
       </button>
 
+      {/* Edit */}
       <button
         onClick={() => navigate(`/admin/students/edit/${row.id}`)}
         className="px-3 py-1.5 text-xs font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors cursor-pointer"
+        title="Edit Student"
       >
-        <EditIcon/>
+        <EditIcon />
       </button>
 
-
+      {/* Delete */}
       <button
         onClick={() => handleDelete(row.id)}
         className="px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+        title="Delete Student"
       >
-        <TrashIcon/>
+        <TrashIcon />
       </button>
     </div>
   );
 
-  const rangeStart =
-    totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const rangeStart = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const rangeEnd = Math.min(currentPage * pageSize, totalCount);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header - unchanged */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-4xl font-semibold text-gray-900">
-            All Students
-          </h1>
+          <h1 className="text-4xl font-semibold text-gray-900">All Students</h1>
           {!loading && (
             <p className="text-sm text-gray-400 mt-1">
               {totalCount} student{totalCount !== 1 ? "s" : ""} enrolled
@@ -169,7 +193,6 @@ export default function StudentsList() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Search */}
           <div className="relative">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
               <SearchIconL />
@@ -183,7 +206,6 @@ export default function StudentsList() {
             />
           </div>
 
-          {/* Add button */}
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate("/admin/students/new")}
@@ -210,7 +232,7 @@ export default function StudentsList() {
         />
       </motion.div>
 
-      {/* Pagination */}
+      {/* Pagination - unchanged */}
       {!loading && totalCount > 0 && (
         <motion.div className="flex items-center justify-between px-1">
           <p className="text-sm text-gray-400">
@@ -227,7 +249,6 @@ export default function StudentsList() {
               <ChevronLeftIcon />
             </button>
 
-            {/* Page numbers */}
             <div className="flex items-center gap-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
@@ -266,16 +287,23 @@ export default function StudentsList() {
         </motion.div>
       )}
 
-      {/* ✅ MODAL */}
+      {/* Modals */}
       <StudentReportsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
         student={selectedStudent}
       />
-      {/* Schedule Modal */}
+
       <StudentScheduleModal
         isOpen={isScheduleModalOpen}
         onClose={() => setIsScheduleModalOpen(false)}
+        student={selectedStudent}
+      />
+
+      {/* New Student Info Modal */}
+      <StudentInfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
         student={selectedStudent}
       />
     </div>

@@ -106,6 +106,14 @@ export const api = {
     return res.json();
   },
 
+  getStudentInfo: async (studentId) => {
+    const res = await fetch(`${API_BASE_URL}/api/students/info/${studentId}`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
   // === COURSES ===
   getCourses: async () => {
     const res = await fetch(`${API_BASE_URL}/api/courses`, { headers: getAuthHeaders() });
