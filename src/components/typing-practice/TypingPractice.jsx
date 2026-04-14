@@ -8,6 +8,9 @@ import TextDisplay from "./TextDisplay";
 import PresetSelector from "./PresetSelector";
 import ResultsModal from "./ResultsModal";
 
+import { api } from "../../services/api";
+import { showSuccess, showError } from "../../utils/toast";
+
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   visible: (i = 0) => ({
@@ -26,8 +29,9 @@ export default function TypingPractice() {
   const [targetText, setTargetText] = useState(() =>
     pickRandom(PRESETS[0].paragraphs)
   );
-  // Incrementing this key forces TextDisplay + textarea to fully remount on reset
   const [resetKey, setResetKey] = useState(0);
+  const [hasSubmitted, setHasSubmitted] = useState(false);   // ← Key fix
+
   const inputRef = useRef(null);
 
   const {
@@ -44,17 +48,52 @@ export default function TypingPractice() {
     reset,
   } = useTypingEngine(targetText);
 
+  // ====================== AUTO UPLOAD (ONCE ONLY) ======================
+  useEffect(() => {
+    const submitTypingReport = async () => {
+      if (!finished || hasSubmitted) return;
+
+      setHasSubmitted(true);   // Prevent multiple submissions
+
+      const payload = {
+        wpm: Math.round(wpm || 0),
+        correct: correctChars || 0,
+        wrong: incorrectChars || 0,
+      };
+
+      try {
+        const result = await api.createTypingReport(payload);
+
+        if (result?.success) {
+          showSuccess("Typing report saved successfully!");
+        } else {
+          showError(result?.message || "Failed to save typing report");
+        }
+      } catch (error) {
+        console.error("Failed to save typing report:", error);
+        showError("Failed to save your typing score.");
+      }
+    };
+
+    if (finished) {
+      submitTypingReport();
+    }
+  }, [finished, wpm, correctChars, incorrectChars, hasSubmitted]);
+  // ===================================================================
+
   const handlePresetChange = useCallback((id) => {
     setActivePresetId(id);
     const preset = PRESETS.find((p) => p.id === id);
     setTargetText(pickRandom(preset.paragraphs));
     setResetKey((k) => k + 1);
+    setHasSubmitted(false);        // Reset submission flag on new test
   }, []);
 
   const handleNewParagraph = useCallback(() => {
     const preset = PRESETS.find((p) => p.id === activePresetId);
     setTargetText(pickRandom(preset.paragraphs));
     setResetKey((k) => k + 1);
+    setHasSubmitted(false);        // Reset submission flag
   }, [activePresetId]);
 
   const handleCloseModal = useCallback(() => {
@@ -64,6 +103,7 @@ export default function TypingPractice() {
   const handleRetry = useCallback(() => {
     reset();
     setResetKey((k) => k + 1);
+    setHasSubmitted(false);        // Reset on retry
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [reset]);
 
@@ -76,7 +116,6 @@ export default function TypingPractice() {
     inputRef.current?.focus();
   }, []);
 
-  // Re-focus input whenever resetKey changes (covers retry + new paragraph)
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [resetKey]);
@@ -92,8 +131,8 @@ export default function TypingPractice() {
         {finished && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1,    y: 0  }}
-            exit={{    opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             <ResultsModal
@@ -112,7 +151,7 @@ export default function TypingPractice() {
 
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
 
-        {/* Header */}
+        {/* Header - unchanged */}
         <motion.div
           variants={fadeUp} custom={0} initial="hidden" animate="visible"
           className="flex items-center justify-between"
@@ -144,7 +183,7 @@ export default function TypingPractice() {
           </button>
         </motion.div>
 
-        {/* Stats */}
+        {/* Stats - unchanged */}
         <motion.div variants={fadeUp} custom={1} initial="hidden" animate="visible">
           <StatsBar
             wpm={wpm}
@@ -154,7 +193,7 @@ export default function TypingPractice() {
           />
         </motion.div>
 
-        {/* Preset selector */}
+        {/* Preset selector - unchanged */}
         <motion.div
           variants={fadeUp} custom={2} initial="hidden" animate="visible"
           className="rounded-2xl p-1 flex flex-col gap-3"
@@ -182,7 +221,7 @@ export default function TypingPractice() {
           />
         </motion.div>
 
-        {/* Text display + input — key prop forces full remount on every reset */}
+        {/* Text display + input - unchanged */}
         <motion.div
           key={resetKey}
           variants={fadeUp} custom={3} initial="hidden" animate="visible"
@@ -218,7 +257,7 @@ export default function TypingPractice() {
               caretColor: "#2563eb",
             }}
             onFocus={(e) => (e.target.style.border = "1.5px solid #2563eb")}
-            onBlur={(e)  => (e.target.style.border = "1.5px solid #e2e8f0")}
+            onBlur={(e) => (e.target.style.border = "1.5px solid #e2e8f0")}
             placeholder="Click here and start typing..."
             spellCheck={false}
             autoComplete="off"

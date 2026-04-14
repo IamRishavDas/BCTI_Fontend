@@ -387,4 +387,24 @@ export const api = {
     return res.json();
   },
 
+  // === TYPING REPORTS ===
+  createTypingReport: async (data) => {
+    const res = await fetch(`${API_BASE_URL}/api/typingreports`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  getMyTypingScoresFromPractice: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/students/reports/my-reports`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
 };
