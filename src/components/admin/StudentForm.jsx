@@ -4,15 +4,8 @@ import { motion } from "framer-motion";
 import { api } from "../../services/api";
 import { showSuccess, showError } from "../../utils/toast";
 import { getTodayDate } from "../../utils/shared";
+import { LockIcon } from "../../static/Svg";
 
-function LockIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-      <path d="M7 11V7a5 5 0 0110 0v4"/>
-    </svg>
-  );
-}
 
 function FieldWrapper({ label, hint, children, required = false }) {
   return (
@@ -169,7 +162,7 @@ export default function StudentForm() {
         showSuccess("Student updated successfully");
         navigate("/admin/students");
       } else {
-        showError(res.message || "Failed to update student");
+        showError(res.message || res.Message || "Failed to update student");
       }
     } else {
       const res = await api.createStudent(payload);
@@ -177,7 +170,7 @@ export default function StudentForm() {
         showSuccess("Student created successfully");
         navigate("/admin/students");
       } else {
-        showError(res.message || "Failed to create student");
+        showError(res.message || res.Message || "Failed to create student");
       }
     }
 

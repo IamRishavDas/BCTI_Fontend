@@ -77,7 +77,7 @@ export default function StudentScheduleModal({ isOpen, onClose }) {
         setIsEditing(false);
         fetchMySchedule();
       } else {
-        showError(res.message || "Failed to update");
+        showError(res.message || res.Message || "Failed to update");
       }
     } catch {
       showError("Failed to update schedule");

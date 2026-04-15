@@ -69,7 +69,7 @@ export default function TypingPractice() {
         if (result?.success) {
           showSuccess("Typing report saved successfully!");
         } else {
-          showError(result?.message || "Failed to save typing report");
+          showError(result?.message || result?.Message || "Failed to save typing report");
         }
       } catch (error) {
         console.error("Failed to save typing report:", error);
