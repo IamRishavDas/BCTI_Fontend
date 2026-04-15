@@ -33,7 +33,7 @@ export default function TypingProgress() {
       if (res.success && res.data) {
         setScores(res.data);
       } else {
-        showError(res.message || "Failed to load typing progress");
+        showError(res.message || res.Message || "Failed to load typing progress");
       }
     } catch (err) {
       showError("Unable to load your typing history");

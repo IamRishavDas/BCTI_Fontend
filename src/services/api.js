@@ -106,6 +106,22 @@ export const api = {
     return res.json();
   },
 
+  getStudentInfo: async (studentId) => {
+    const res = await fetch(`${API_BASE_URL}/api/students/info/${studentId}`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
+  getMyStudentInfo: async () => {
+    const res = await fetch(`${API_BASE_URL}/api/students/my-info`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.status === 401) handleUnauthorized();
+    return res.json();
+  },
+
   // === COURSES ===
   getCourses: async () => {
     const res = await fetch(`${API_BASE_URL}/api/courses`, { headers: getAuthHeaders() });
@@ -412,5 +428,25 @@ export const api = {
       status: response.status
     };
   },
+
+  getStudentPersonalInfoPDF: async (studentId) => {
+    const url = `${API_BASE_URL}/api/documents/personal-info/${studentId}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.status === 401) handleUnauthorized();
+
+    const blob = await response.blob();
+
+    return {
+      data: blob,
+      rawResponse: response,
+      ok: response.ok,
+      status: response.status,
+    };
+  }
 
 };

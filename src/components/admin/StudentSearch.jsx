@@ -7,7 +7,9 @@ import { showError, showSuccess } from "../../utils/toast";
 import { useConfirm } from "../../contexts/ConfirmContext";
 import StudentReportsModal from "./StudentReportsModal";
 import StudentScheduleModal from "./StudentScheduleModal";
-import { ClockIcon, EditIcon, ReportsIcon, TrashIcon } from "../../static/Svg";
+import StudentInfoModal from "./StudentInfoModal";  
+
+import { ClockIcon, DownloadIcon, EditIcon, EyeIcon, ReportsIcon, TrashIcon } from "../../static/Svg";
 
 export default function StudentSearch() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +20,7 @@ export default function StudentSearch() {
   // Modals state
   const [reportsModalOpen, setReportsModalOpen] = useState(false);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);     // ← New
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const navigate = useNavigate();
@@ -58,6 +61,22 @@ export default function StudentSearch() {
     }
   };
 
+  const handleDownloadPDF = async (studentId) => {
+    try {
+      const res = await api.getStudentPersonalInfoPDF(studentId);
+
+      if (!res.ok) {
+        showError("Failed to download PDF");
+        return;
+      }
+
+      const url = window.URL.createObjectURL(res.data);
+      window.open(url, "_blank");
+    } catch {
+      showError("Error downloading PDF");
+    }
+  };
+
   const getInitials = (firstName, lastName) =>
     `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase();
 
@@ -75,7 +94,6 @@ export default function StudentSearch() {
     return avatarColors[index];
   };
 
-  // Handle Delete
   const handleDelete = async (row) => {
     const isConfirmed = await confirm({
       title: "Delete Student?",
@@ -89,7 +107,7 @@ export default function StudentSearch() {
     const res = await api.softDeleteStudent(row.id);
     if (res.success) {
       showSuccess("Student moved to deleted list");
-      performSearch(debouncedSearchTerm); // Refresh current search
+      performSearch(debouncedSearchTerm);
     } else {
       showError("Failed to delete student");
     }
@@ -139,9 +157,29 @@ export default function StudentSearch() {
     },
   ];
 
-  // All action buttons
+  // Actions - Added Eye button at the beginning
   const actions = (row) => (
     <div className="flex gap-1.5">
+      {/* Eye Button - View Full Info */}
+      <button
+        onClick={() => {
+          setSelectedStudent(row);
+          setInfoModalOpen(true);
+        }}
+        className="px-3 py-1.5 text-xs font-medium text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition-colors cursor-pointer"
+        title="View Full Information"
+      >
+        <EyeIcon/>
+      </button>
+
+      <button
+        onClick={() => handleDownloadPDF(row.id)}
+        className="px-3 py-1.5 text-xs font-medium text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
+        title="Download PDF"
+      >
+        <DownloadIcon/>
+      </button>
+
       {/* Reports Button */}
       <button
         onClick={() => {
@@ -188,7 +226,7 @@ export default function StudentSearch() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header - unchanged */}
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Search students</h1>
         <p className="text-sm text-gray-400 mt-1">
@@ -196,7 +234,7 @@ export default function StudentSearch() {
         </p>
       </div>
 
-      {/* Search input */}
+      {/* Search input - unchanged */}
       <div className="space-y-1.5">
         <div className="relative">
           <svg
@@ -229,7 +267,7 @@ export default function StudentSearch() {
         </p>
       </div>
 
-      {/* Results */}
+      {/* Results - unchanged */}
       {debouncedSearchTerm && (
         <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
           <div className="flex items-center justify-between px-5 py-3.5 bg-gray-50 border-b border-gray-100">
@@ -263,6 +301,12 @@ export default function StudentSearch() {
       <StudentScheduleModal
         isOpen={scheduleModalOpen}
         onClose={() => setScheduleModalOpen(false)}
+        student={selectedStudent}
+      />
+
+      <StudentInfoModal
+        isOpen={infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
         student={selectedStudent}
       />
     </div>

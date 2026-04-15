@@ -191,7 +191,7 @@ export default function StudentDashboard() {
               onClick={() => setIsScheduleModalOpen(true)}
               className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 active:scale-95 transition-all"
             >
-              <ClockIcon/> My Schedule
+              <ClockIcon/> Class Schedule
             </button>
           </div>
         </motion.div>
