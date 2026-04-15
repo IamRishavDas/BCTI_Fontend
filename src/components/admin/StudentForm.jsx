@@ -241,7 +241,7 @@ export default function StudentForm() {
           <div className="pt-6 border-t border-gray-100">
             <h3 className="text-lg font-medium text-gray-800 mb-5">Personal Information</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <FieldWrapper label="Father's Name">
                 <input type="text" value={form.fathersName} onChange={(e) => setForm({ ...form, fathersName: e.target.value })} className={inputNormal} />
               </FieldWrapper>
@@ -254,7 +254,7 @@ export default function StudentForm() {
               <input type="text" value={form.spouseName} onChange={(e) => setForm({ ...form, spouseName: e.target.value })} className={inputNormal} />
             </FieldWrapper>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mt-6">
               <FieldWrapper label="Date of Birth">
                 <input type="date" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} className={inputNormal} />
               </FieldWrapper>
@@ -269,9 +269,11 @@ export default function StudentForm() {
               </FieldWrapper>
             </div>
 
-            <FieldWrapper label="Religion">
-              <input type="text" value={form.religion} onChange={(e) => setForm({ ...form, religion: e.target.value })} className={inputNormal} />
-            </FieldWrapper>
+            <div className="mb-6 mt-6">
+              <FieldWrapper label="Religion">
+                <input type="text" value={form.religion} onChange={(e) => setForm({ ...form, religion: e.target.value })} className={inputNormal} />
+              </FieldWrapper>
+            </div>
 
             <FieldWrapper label="Highest Qualification" required>
               <select value={form.qualification} onChange={(e) => setForm({ ...form, qualification: e.target.value })} className={inputNormal} required>
@@ -284,11 +286,13 @@ export default function StudentForm() {
               </select>
             </FieldWrapper>
 
-            <FieldWrapper label="Full Address">
-              <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={inputNormal + " min-h-[80px] resize-y"} placeholder="House no, street, city..." />
-            </FieldWrapper>
+            <div className="mt-6 mb-6">
+              <FieldWrapper label="Full Address">
+                <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className={inputNormal + " min-h-[80px] resize-y"} placeholder="House no, street, city..." />
+              </FieldWrapper>
+            </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <FieldWrapper label="Pin Code">
                 <input type="number" value={form.pinCode} onChange={(e) => setForm({ ...form, pinCode: e.target.value })} className={inputNormal} />
               </FieldWrapper>
@@ -301,7 +305,7 @@ export default function StudentForm() {
               <input type="text" value={form.enquirySource} onChange={(e) => setForm({ ...form, enquirySource: e.target.value })} className={inputNormal} />
             </FieldWrapper>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mt-6">
               <FieldWrapper label="Government ID Type">
                 <select value={form.governmentIdType} onChange={(e) => setForm({ ...form, governmentIdType: e.target.value })} className={inputNormal}>
                   <option value="">Select ID Type</option>
