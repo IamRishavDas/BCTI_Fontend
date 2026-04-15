@@ -19,7 +19,8 @@ import {
   ReportsIcon, 
   TrashIcon,
   EyeIcon,   
-  SearchIconL
+  SearchIconL,
+  DownloadIcon
 } from "../../static/Svg";
 
 export default function StudentsList() {
@@ -94,6 +95,22 @@ export default function StudentsList() {
     }
   };
 
+  const handleDownloadPDF = async (studentId) => {
+    try {
+      const res = await api.getStudentPersonalInfoPDF(studentId);
+
+      if (!res.ok) {
+        showError("Failed to download PDF");
+        return;
+      }
+
+      const url = window.URL.createObjectURL(res.data);
+      window.open(url, "_blank");
+    } catch {
+      showError("Error downloading PDF");
+    }
+  };
+
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
     setCurrentPage(newPage);
@@ -126,6 +143,14 @@ export default function StudentsList() {
         title="View Full Information"
       >
         <EyeIcon/>
+      </button>
+
+      <button
+        onClick={() => handleDownloadPDF(row.id)}
+        className="px-3 py-1.5 text-xs font-medium text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
+        title="Download PDF"
+      >
+        <DownloadIcon/>
       </button>
 
       {/* Reports */}

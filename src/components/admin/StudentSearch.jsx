@@ -9,7 +9,7 @@ import StudentReportsModal from "./StudentReportsModal";
 import StudentScheduleModal from "./StudentScheduleModal";
 import StudentInfoModal from "./StudentInfoModal";  
 
-import { ClockIcon, EditIcon, EyeIcon, ReportsIcon, TrashIcon } from "../../static/Svg";
+import { ClockIcon, DownloadIcon, EditIcon, EyeIcon, ReportsIcon, TrashIcon } from "../../static/Svg";
 
 export default function StudentSearch() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,6 +58,22 @@ export default function StudentSearch() {
       setStudents([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadPDF = async (studentId) => {
+    try {
+      const res = await api.getStudentPersonalInfoPDF(studentId);
+
+      if (!res.ok) {
+        showError("Failed to download PDF");
+        return;
+      }
+
+      const url = window.URL.createObjectURL(res.data);
+      window.open(url, "_blank");
+    } catch {
+      showError("Error downloading PDF");
     }
   };
 
@@ -154,6 +170,14 @@ export default function StudentSearch() {
         title="View Full Information"
       >
         <EyeIcon/>
+      </button>
+
+      <button
+        onClick={() => handleDownloadPDF(row.id)}
+        className="px-3 py-1.5 text-xs font-medium text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
+        title="Download PDF"
+      >
+        <DownloadIcon/>
       </button>
 
       {/* Reports Button */}

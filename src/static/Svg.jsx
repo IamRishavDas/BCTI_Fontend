@@ -631,4 +631,26 @@ export function ProfileIcon({ active }) {
   );
 }
 
+export function DownloadIcon({ active }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={getStroke(active)}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Arrow pointing down */}
+      <line x1="12" y1="5" x2="12" y2="15" />
+      <polyline points="6 11 12 17 18 11" />
+
+      {/* Base line */}
+      <line x1="5" y1="19" x2="19" y2="19" />
+    </svg>
+  );
+}
+
 

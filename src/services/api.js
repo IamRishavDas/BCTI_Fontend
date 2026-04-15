@@ -429,4 +429,24 @@ export const api = {
     };
   },
 
+  getStudentPersonalInfoPDF: async (studentId) => {
+    const url = `${API_BASE_URL}/api/documents/personal-info/${studentId}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.status === 401) handleUnauthorized();
+
+    const blob = await response.blob();
+
+    return {
+      data: blob,
+      rawResponse: response,
+      ok: response.ok,
+      status: response.status,
+    };
+  }
+
 };
