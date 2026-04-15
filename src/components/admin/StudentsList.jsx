@@ -9,6 +9,7 @@ import { useConfirm } from "../../contexts/ConfirmContext";
 import StudentReportsModal from "./StudentReportsModal"; 
 import StudentScheduleModal from "./StudentScheduleModal";
 import StudentInfoModal from "./StudentInfoModal";   
+import StudentPDFModal from "./StudentPDFModal";
 
 import { 
   ChevronLeftIcon, 
@@ -34,8 +35,9 @@ export default function StudentsList() {
   // Modals state
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
-  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);     // ← New
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);     
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
 
   const pageSize = 10;
   const navigate = useNavigate();
@@ -95,20 +97,9 @@ export default function StudentsList() {
     }
   };
 
-  const handleDownloadPDF = async (studentId) => {
-    try {
-      const res = await api.getStudentPersonalInfoPDF(studentId);
-
-      if (!res.ok) {
-        showError("Failed to download PDF");
-        return;
-      }
-
-      const url = window.URL.createObjectURL(res.data);
-      window.open(url, "_blank");
-    } catch {
-      showError("Error downloading PDF");
-    }
+  const handleOpenPDF = (row) => {
+    setSelectedStudent(row);
+    setIsPDFModalOpen(true);
   };
 
   const handlePageChange = (newPage) => {
@@ -146,11 +137,11 @@ export default function StudentsList() {
       </button>
 
       <button
-        onClick={() => handleDownloadPDF(row.id)}
+        onClick={() => handleOpenPDF(row)}
         className="px-3 py-1.5 text-xs font-medium text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
-        title="Download PDF"
+        title="View PDF"
       >
-        <DownloadIcon/>
+        <DownloadIcon />
       </button>
 
       {/* Reports */}
@@ -325,10 +316,15 @@ export default function StudentsList() {
         student={selectedStudent}
       />
 
-      {/* New Student Info Modal */}
       <StudentInfoModal
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
+        student={selectedStudent}
+      />
+
+      <StudentPDFModal
+        isOpen={isPDFModalOpen}
+        onClose={() => setIsPDFModalOpen(false)}
         student={selectedStudent}
       />
     </div>
